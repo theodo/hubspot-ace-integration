@@ -1,11 +1,19 @@
 import type { AWS } from '@serverless/typescript';
+import type { Lift } from 'serverless-lift';
 
 import hello from '@functions/hello';
 
-const serverlessConfiguration: AWS = {
+const serverlessConfiguration: AWS & Lift = {
   service: 'hubspot-ace-integration',
   frameworkVersion: '2',
-  plugins: ['serverless-esbuild'],
+  plugins: ['serverless-esbuild', 'serveless-lift'],
+  constructs: {
+    'hubspot-webhook': {
+      type: 'webhook',
+      path: '/hubspot',
+      insecure: true,
+    },
+  },
   provider: {
     name: 'aws',
     runtime: 'nodejs14.x',
