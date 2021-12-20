@@ -14,5 +14,7 @@ export default {
       },
     },
   ],
-
+  environment: {
+    BUCKET_NAME: '${construct:hubspot-s3.bucketName}'
+  }
 }

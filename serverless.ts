@@ -13,6 +13,9 @@ const serverlessConfiguration: AWS & Lift = {
       path: '/hubspot',
       insecure: true,
     },
+    'hubspot-s3': {
+      type: 'storage'
+    }
   },
   provider: {
     name: 'aws',
