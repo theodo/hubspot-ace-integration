@@ -6,7 +6,7 @@ import hello from '@functions/hello';
 const serverlessConfiguration: AWS & Lift = {
   service: 'hubspot-ace-integration',
   frameworkVersion: '2',
-  plugins: ['serverless-esbuild', 'serveless-lift'],
+  plugins: ['serverless-esbuild', 'serverless-lift'],
   constructs: {
     'hubspot-webhook': {
       type: 'webhook',
@@ -26,7 +26,11 @@ const serverlessConfiguration: AWS & Lift = {
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
     },
     lambdaHashingVersion: '20201221',
-    profile: "ace-integration-staging"
+    profile: "ace-integration-staging",
+    eventBridge: {
+      useCloudFormation: true
+    },
+    region: 'eu-west-1'
   },
   // import the function via paths
   functions: { hello },
