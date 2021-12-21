@@ -1,1 +1,5 @@
-export { default as hello } from './writeOpportunities';
+import writeOpportunities from './writeOpportunities';
+
+export default {
+  writeOpportunities
+}

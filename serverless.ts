@@ -1,7 +1,7 @@
 import type { AWS } from '@serverless/typescript';
 import type { Lift } from 'serverless-lift';
 
-import hello from '@functions/writeOpportunities';
+import functions from '@functions/index';
 
 const serverlessConfiguration: AWS & Lift = {
   service: 'hubspot-ace-integration',
@@ -36,7 +36,7 @@ const serverlessConfiguration: AWS & Lift = {
     region: 'eu-west-1'
   },
   // import the function via paths
-  functions: { hello },
+  functions,
   package: { individually: true },
   custom: {
     esbuild: {
