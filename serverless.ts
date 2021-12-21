@@ -1,7 +1,7 @@
 import type { AWS } from '@serverless/typescript';
 import type { Lift } from 'serverless-lift';
 
-import hello from '@functions/hello';
+import hello from '@functions/writeOpportunities';
 
 const serverlessConfiguration: AWS & Lift = {
   service: 'hubspot-ace-integration',
