@@ -13,7 +13,8 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.44.0",
     "@middy/core": "^2.5.3",
-    "@middy/http-json-body-parser": "^2.5.3"
+    "@middy/http-json-body-parser": "^2.5.3",
+    "hubspot": "^2.3.14"
   },
   "devDependencies": {
     "@serverless/typescript": "^2.23.0",
