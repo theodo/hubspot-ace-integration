@@ -15,7 +15,8 @@
     "@hubspot/api-client": "^5.0.0",
     "@middy/core": "^2.5.3",
     "@middy/http-json-body-parser": "^2.5.3",
-    "@middy/ssm": "^2.5.4"
+    "@middy/ssm": "^2.5.4",
+    "moment": "^2.29.1"
   },
   "devDependencies": {
     "@aws-cdk/aws-iam": "^1.137.0",

@@ -11,7 +11,7 @@ import type {
 import { Client } from "@hubspot/api-client";
 import { AceFileOppurtunityInbound } from "@libs/types";
 import { middyfy } from "@libs/lambda";
-import * as moment from "moment";
+import moment from "moment";
 
 const s3Client = new S3Client({ region: "us-west-2" });
 
