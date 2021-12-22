@@ -1,6 +1,13 @@
-import middy from "@middy/core"
-import middyJsonBodyParser from "@middy/http-json-body-parser"
+import middy from "@middy/core";
+import ssm from "@middy/ssm";
 
 export const middyfy = (handler) => {
-  return middy(handler).use(middyJsonBodyParser())
-}
+  return middy(handler).use(
+    ssm({
+      fetchData: {
+        HUBSPOT_ACCESS_TOKEN: process.env.HUBSPOT_ACCESS_TOKEN_PATH,
+      },
+      setToEnv: true,
+    })
+  );
+};
