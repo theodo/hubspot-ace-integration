@@ -14,6 +14,9 @@ export interface HubspotWebhook {
     dealname: {
       value: string;
     };
+    closedate: {
+      value: string;
+    };
   };
   version: number;
   secondaryIdentifier: null;
@@ -39,6 +42,7 @@ export interface OpportunityInbound {
   deliveryModel: string;
   expectedMonthlyAwsRevenue: number;
   partnerPrimaryNeedFromAws: string;
+  targetCloseDate: string;
 }
 
 export interface Company {

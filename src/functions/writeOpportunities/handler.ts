@@ -11,6 +11,7 @@ import type {
 import { Client } from "@hubspot/api-client";
 import { AceFileOppurtunityInbound } from "@libs/types";
 import { middyfy } from "@libs/lambda";
+import * as moment from "moment";
 
 const s3Client = new S3Client({ region: "us-west-2" });
 
@@ -77,6 +78,9 @@ const createOpportunityObject = async (
         deliveryModel: "Managed Services",
         expectedMonthlyAwsRevenue: 100.0,
         partnerPrimaryNeedFromAws: "For Visibility - No assistance needed",
+        targetCloseDate: moment(
+          parseInt(event.properties.closedate.value)
+        ).format("YYYY-MM-DD"),
       },
     ],
   };
