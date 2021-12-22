@@ -12,16 +12,27 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.44.0",
+    "@hubspot/api-client": "^5.0.0",
     "@middy/core": "^2.5.3",
     "@middy/http-json-body-parser": "^2.5.3",
-    "axios": "^0.24.0"
+    "@middy/ssm": "^2.5.4"
   },
   "devDependencies": {
+    "@aws-cdk/aws-iam": "^1.137.0",
+    "@aws-cdk/aws-ssm": "^1.137.0",
+    "@aws-cdk/core": "^1.137.0",
     "@serverless/typescript": "^2.23.0",
     "@types/aws-lambda": "^8.10.71",
     "@types/node": "^14.14.25",
+    "@typescript-eslint/eslint-plugin": "^5.8.0",
+    "@typescript-eslint/parser": "^5.8.0",
     "esbuild": "^0.14.6",
+    "eslint": "^8.5.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-prettier": "^4.0.0",
     "json-schema-to-ts": "^1.5.0",
+    "prettier": "^2.5.1",
     "serverless": "^2.23.0",
     "serverless-esbuild": "^1.17.1",
     "serverless-lift": "^1.11.0",
