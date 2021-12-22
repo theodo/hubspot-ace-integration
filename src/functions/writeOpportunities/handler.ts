@@ -1,16 +1,86 @@
-import { S3Client, PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
-import type { WebhookEventBridgeEvent } from '@libs/types';
+import {
+  PutObjectCommand,
+  PutObjectCommandInput,
+  S3Client,
+} from "@aws-sdk/client-s3";
+import type {
+  Company,
+  HubspotWebhook,
+  WebhookEventBridgeEvent,
+} from "@libs/types";
+import { Client } from "@hubspot/api-client";
+import { AceFileOppurtunityInbound } from "@libs/types";
+import { middyfy } from "@libs/lambda";
 
-const s3Client = new S3Client({});
+// const jsonToSend = require('./fileToSend.json');
 
-export const main = async (event: WebhookEventBridgeEvent): Promise<void> => {
-  console.log(JSON.stringify(event));
+const s3Client = new S3Client({ region: "us-west-2" });
+
+const writeOpprtunity = async (
+  event: WebhookEventBridgeEvent
+): Promise<void> => {
+  const opportunity = await createOpportunityObject(event.detail);
+  console.log(opportunity);
+
   const input: PutObjectCommandInput = {
-    Key: 'toto',
+    Key: "opportunity-inbound/TEST_3.json",
     Bucket: process.env.BUCKET_NAME,
-    Body: 'hello!!'
-  }
+    Body: JSON.stringify(opportunity),
+    ACL: "bucket-owner-full-control",
+  };
   const putCommand = new PutObjectCommand(input);
-  await s3Client.send(putCommand)
+  await s3Client.send(putCommand);
+
   return;
-}
+};
+
+const createOpportunityObject = async (
+  event: HubspotWebhook
+): Promise<AceFileOppurtunityInbound> => {
+  const hubspotClient = new Client({
+    accessToken: process.env.HUBSPOT_ACCESS_TOKEN,
+  });
+  const { objectId: dealId } = event;
+  const {
+    body: { results: companyIds },
+  } = await hubspotClient.crm.deals.associationsApi.getAll(dealId, "Companies");
+
+  let company: Company = {
+    city: "",
+    createdate: undefined,
+    domain: "",
+    hs_lastmodifieddate: undefined,
+    industry: "",
+    name: "",
+    phone: "",
+    state: "",
+  };
+
+  if (companyIds.length > 0) {
+    company = (
+      await hubspotClient.crm.companies.basicApi.getById(companyIds[0].id)
+    ).body.properties as unknown as Company;
+  }
+
+  const opportunity = {
+    version: "1",
+    spmsId: "spmsId",
+    opportunities: [
+      {
+        status: "Draft",
+        customerCompanyName: company.name || event.properties.dealname.value,
+        customerTitle: "",
+        customerPhone: "",
+        customerLastName: "",
+        customerFirstName: "",
+        customerEmail: "",
+        customerWebsite: company.domain || "theodo.fr",
+        partnerProjectTitle: event.properties.dealname.value,
+      },
+    ],
+  };
+
+  return opportunity;
+};
+
+export const main = middyfy(writeOpprtunity);
