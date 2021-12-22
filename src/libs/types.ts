@@ -36,6 +36,9 @@ export interface OpportunityInbound {
   customerEmail: string | undefined;
   customerWebsite: string;
   partnerProjectTitle: string;
+  deliveryModel: string;
+  expectedMonthlyAwsRevenue: number;
+  partnerPrimaryNeedFromAws: string;
 }
 
 export interface Company {

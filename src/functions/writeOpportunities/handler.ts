@@ -76,6 +76,9 @@ const createOpportunityObject = async (
         customerEmail: "",
         customerWebsite: company.domain || "theodo.fr",
         partnerProjectTitle: event.properties.dealname.value,
+        deliveryModel: "Managed Services",
+        expectedMonthlyAwsRevenue: 100.0,
+        partnerPrimaryNeedFromAws: "For Visibility - No assistance needed",
       },
     ],
   };
