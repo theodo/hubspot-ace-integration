@@ -12,8 +12,6 @@ import { Client } from "@hubspot/api-client";
 import { AceFileOppurtunityInbound } from "@libs/types";
 import { middyfy } from "@libs/lambda";
 
-// const jsonToSend = require('./fileToSend.json');
-
 const s3Client = new S3Client({ region: "us-west-2" });
 
 const writeOpprtunity = async (
