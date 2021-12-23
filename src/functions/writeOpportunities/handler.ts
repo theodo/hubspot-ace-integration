@@ -109,12 +109,9 @@ export const createOpportunityObject = async (
         deliveryModel: "Managed Services",
         expectedMonthlyAwsRevenue: 100.0,
         partnerPrimaryNeedFromAws: "For Visibility - No assistance needed",
-        targetCloseDate: moment(
-          parseInt(event.properties.closedate.value)
-        ).format("YYYY-MM-DD"),
-        primaryContactLastName: owner.lastName || "theodo",
-        primaryContactFirstName: owner.firstName || "theodo",
-        primaryContactEmail: owner.email || "theodo",
+        primaryContactLastName: owner.lastName,
+        primaryContactFirstName: owner.firstName,
+        primaryContactEmail: owner.email,
         industry: mapIndustry(company.secteur_gics),
         projectDescription: notes,
       },
