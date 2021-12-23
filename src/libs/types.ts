@@ -46,12 +46,17 @@ export interface OpportunityInbound {
 }
 
 export interface Company {
-  city: string | undefined;
-  createdate: Date | undefined;
-  domain: string | undefined;
-  hs_lastmodifieddate: Date | undefined;
   industry: string | undefined;
+  country: string | undefined;
+  domain: string | undefined;
+  zip: string | undefined;
   name: string | undefined;
-  phone: string | undefined;
-  state: string | undefined;
 }
+
+export const companyPorpertiesNeeded = [
+  "industry",
+  "country",
+  "zip",
+  "name",
+  "domain",
+];

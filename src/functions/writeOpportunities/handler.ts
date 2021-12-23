@@ -9,7 +9,10 @@ import type {
   WebhookEventBridgeEvent,
 } from "@libs/types";
 import { Client } from "@hubspot/api-client";
-import { AceFileOppurtunityInbound } from "@libs/types";
+import {
+  AceFileOppurtunityInbound,
+  companyPorpertiesNeeded,
+} from "@libs/types";
 import { middyfy } from "@libs/lambda";
 import moment from "moment";
 
@@ -33,7 +36,7 @@ const writeOpprtunity = async (
   return;
 };
 
-const createOpportunityObject = async (
+export const createOpportunityObject = async (
   event: HubspotWebhook
 ): Promise<AceFileOppurtunityInbound> => {
   const hubspotClient = new Client({
@@ -45,20 +48,21 @@ const createOpportunityObject = async (
   } = await hubspotClient.crm.deals.associationsApi.getAll(dealId, "Companies");
 
   let company: Company = {
-    city: "",
-    createdate: undefined,
-    domain: "",
-    hs_lastmodifieddate: undefined,
     industry: "",
+    country: "",
+    domain: "",
+    zip: "",
     name: "",
-    phone: "",
-    state: "",
   };
 
   if (companyIds.length > 0) {
     company = (
-      await hubspotClient.crm.companies.basicApi.getById(companyIds[0].id)
+      await hubspotClient.crm.companies.basicApi.getById(
+        companyIds[0].id,
+        companyPorpertiesNeeded
+      )
     ).body.properties as unknown as Company;
+    console.log("company", company);
   }
 
   const opportunity = {
@@ -68,6 +72,8 @@ const createOpportunityObject = async (
       {
         status: "Draft",
         customerCompanyName: company.name || event.properties.dealname.value,
+        country: company.country || "France",
+        postalCode: company.zip || "75017",
         customerTitle: "",
         customerPhone: "",
         customerLastName: "",
