@@ -16,6 +16,7 @@ import {
 } from "@libs/types";
 import { middyfy } from "@libs/lambda";
 import moment from "moment";
+import axios, { AxiosRequestConfig } from "axios";
 
 const s3Client = new S3Client({ region: "us-west-2" });
 
@@ -48,6 +49,23 @@ export const createOpportunityObject = async (
     body: { results: companyIds },
   } = await hubspotClient.crm.deals.associationsApi.getAll(dealId, "Companies");
 
+  const {
+    body: { results: noteIds },
+  } = await hubspotClient.crm.deals.associationsApi.getAll(dealId, "Notes");
+
+  const notes = (
+    await Promise.all(
+      noteIds.map(
+        async ({ id }) =>
+          await getCleanNoteBody(id, process.env.HUBSPOT_ACCESS_TOKEN)
+      )
+    )
+  ).join("\n");
+
+  /**
+   * @debt : Need to refacto and not use let keyword
+   */
+
   let company: Company = {
     secteur_gics: "",
     country: "",
@@ -65,6 +83,12 @@ export const createOpportunityObject = async (
     ).body.properties as unknown as Company;
     console.log("company", company);
   }
+
+  const owner = (
+    await hubspotClient.crm.owners.ownersApi.getById(
+      parseInt(event.properties.hubspot_owner_id.value)
+    )
+  ).body;
 
   const opportunity = {
     version: "1",
@@ -88,7 +112,11 @@ export const createOpportunityObject = async (
         targetCloseDate: moment(
           parseInt(event.properties.closedate.value)
         ).format("YYYY-MM-DD"),
+        primaryContactLastName: owner.lastName || "theodo",
+        primaryContactFirstName: owner.firstName || "theodo",
+        primaryContactEmail: owner.email || "theodo",
         industry: mapIndustry(company.secteur_gics),
+        projectDescription: notes,
       },
     ],
   };
@@ -99,4 +127,32 @@ export const createOpportunityObject = async (
 const mapIndustry = (secteur_gics: string) => {
   return industryHubspotToAceMappingObject[secteur_gics];
 };
+
+const getNoteById = async (id: string, hubspotToken: string) => {
+  const config: AxiosRequestConfig = {
+    headers: {
+      authorization: `Bearer ${hubspotToken}`,
+    },
+    params: {
+      properties: "hs_note_body",
+    },
+  };
+
+  return (
+    await axios.get(
+      `${process.env.HUBSPOT_API_BASE_URL}/objects/notes/${id}?archived=false`,
+      config
+    )
+  ).data;
+};
+
+const getCleanNoteBody = async (id: string, hubspotToken: string) =>
+  cleanTextFromHtmlTags(
+    (await getNoteById(id, hubspotToken)).properties.hs_note_body
+  );
+
+const cleanTextFromHtmlTags = (html: string) => {
+  return html.replace(/<[^>]+>/g, "");
+};
+
 export const main = middyfy(writeOpprtunity);

@@ -17,6 +17,9 @@ export interface HubspotWebhook {
     closedate: {
       value: string;
     };
+    hubspot_owner_id: {
+      value: string;
+    };
   };
   version: number;
   secondaryIdentifier: null;
