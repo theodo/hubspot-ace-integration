@@ -3,6 +3,7 @@ import type { Lift } from "serverless-lift";
 
 import { App, Stack } from "@aws-cdk/core";
 
+// TODO make initialization in a separate file
 const app = new App();
 export const stack = new Stack(app);
 import functions from "@functions/index";
