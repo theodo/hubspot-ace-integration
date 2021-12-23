@@ -19,12 +19,15 @@ import {
 import { middyfy } from "@libs/lambda";
 import moment from "moment";
 import axios, { AxiosRequestConfig } from "axios";
+import _ from "lodash";
 
 const s3Client = new S3Client({ region: "us-west-2" });
 
 const writeOpprtunity = async (
   event: WebhookEventBridgeEvent
 ): Promise<void> => {
+  console.log("event", JSON.stringify(event));
+
   const initProperties: Properties<string> = {
     dealname: undefined,
     closedate: undefined,
@@ -39,8 +42,8 @@ const writeOpprtunity = async (
     detail: { ...event.detail, properties },
   };
 
-  console.log(simplifiedEvent.detail);
   const opportunity = await createOpportunityObject(simplifiedEvent.detail);
+
   console.log(opportunity);
 
   const input: PutObjectCommandInput = {
@@ -61,51 +64,17 @@ export const createOpportunityObject = async (
   const hubspotClient = new Client({
     accessToken: process.env.HUBSPOT_ACCESS_TOKEN,
   });
-  const { objectId: dealId } = event;
-  const {
-    body: { results: companyIds },
-  } = await hubspotClient.crm.deals.associationsApi.getAll(dealId, "Companies");
 
   const {
-    body: { results: noteIds },
-  } = await hubspotClient.crm.deals.associationsApi.getAll(dealId, "Notes");
+    objectId: dealId,
+    properties: { hubspot_owner_id },
+  } = event;
 
-  const notes = (
-    await Promise.all(
-      noteIds.map(
-        async ({ id }) =>
-          await getCleanNoteBody(id, process.env.HUBSPOT_ACCESS_TOKEN)
-      )
-    )
-  ).join("\n");
+  const notes = await getNotes(dealId, hubspotClient);
 
-  /**
-   * @debt : Need to refacto and not use let keyword
-   */
+  const company = await getCompany(dealId, hubspotClient);
 
-  let company: Company = {
-    secteur_gics: "",
-    country: "",
-    domain: "",
-    zip: "",
-    name: "",
-  };
-
-  if (companyIds.length > 0) {
-    company = (
-      await hubspotClient.crm.companies.basicApi.getById(
-        companyIds[0].id,
-        companyPorpertiesNeeded
-      )
-    ).body.properties as unknown as Company;
-    console.log("company", company);
-  }
-
-  const owner = (
-    await hubspotClient.crm.owners.ownersApi.getById(
-      parseInt(event.properties.hubspot_owner_id)
-    )
-  ).body;
+  const owner = await getOwner(hubspot_owner_id, hubspotClient);
 
   const opportunity = {
     version: "1",
@@ -114,14 +83,14 @@ export const createOpportunityObject = async (
       {
         status: "Draft",
         customerCompanyName: company.name || event.properties.dealname,
-        country: company.country || "France",
-        postalCode: company.zip || "75017",
+        country: company.country,
+        postalCode: company.zip,
         customerTitle: "",
         customerPhone: "",
         customerLastName: "",
         customerFirstName: "",
         customerEmail: "",
-        customerWebsite: company.domain || "theodo.fr",
+        customerWebsite: company.domain || "",
         partnerProjectTitle: event.properties.dealname,
         deliveryModel: "Managed Services",
         expectedMonthlyAwsRevenue: 100.0,
@@ -134,12 +103,64 @@ export const createOpportunityObject = async (
         primaryContactEmail: owner.email,
         industry: mapIndustry(company.secteur_gics),
         projectDescription: notes,
+        aWSAccountOwnerName: "TEST owner name",
+        aWSAccountOwnerEmail: "test@test.com",
+        awsAccountId: "111111111111",
       },
     ],
   };
 
   return opportunity;
 };
+
+const getCompany = async (
+  dealId: string | undefined,
+  hubspotClient: Client
+): Promise<Company> => {
+  const defaultCompany: Company = {
+    secteur_gics: "",
+    country: "France",
+    domain: "theodo.fr",
+    zip: "75017",
+    name: "",
+  };
+
+  const {
+    body: {
+      results: [{ id: companyId }],
+    },
+  } = await hubspotClient.crm.deals.associationsApi.getAll(dealId, "Companies");
+
+  const fetchedCompany = companyId
+    ? (
+        await hubspotClient.crm.companies.basicApi.getById(
+          companyId,
+          companyPorpertiesNeeded
+        )
+      ).body.properties
+    : undefined;
+
+  return _.defaults(fetchedCompany, defaultCompany);
+};
+
+const getNotes = async (dealId: string, hubspotClient: Client) => {
+  const {
+    body: { results: noteIds },
+  } = await hubspotClient.crm.deals.associationsApi.getAll(dealId, "Notes");
+
+  return (
+    await Promise.all(
+      noteIds.map(
+        async ({ id }) =>
+          await getCleanNoteBody(id, process.env.HUBSPOT_ACCESS_TOKEN)
+      )
+    )
+  ).join("\n");
+};
+
+const getOwner = async (hubspot_owner_id: string, hubspotClient: Client) =>
+  (await hubspotClient.crm.owners.ownersApi.getById(parseInt(hubspot_owner_id)))
+    .body;
 
 const mapIndustry = (secteur_gics: string) => {
   return industryHubspotToAceMappingObject[secteur_gics];
