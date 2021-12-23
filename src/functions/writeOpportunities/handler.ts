@@ -8,6 +8,7 @@ import type {
   HubspotWebhook,
   WebhookEventBridgeEvent,
 } from "@libs/types";
+import { industryHubspotToAceMappingObject } from "@libs/types";
 import { Client } from "@hubspot/api-client";
 import {
   AceFileOppurtunityInbound,
@@ -48,7 +49,7 @@ export const createOpportunityObject = async (
   } = await hubspotClient.crm.deals.associationsApi.getAll(dealId, "Companies");
 
   let company: Company = {
-    industry: "",
+    secteur_gics: "",
     country: "",
     domain: "",
     zip: "",
@@ -87,6 +88,7 @@ export const createOpportunityObject = async (
         targetCloseDate: moment(
           parseInt(event.properties.closedate.value)
         ).format("YYYY-MM-DD"),
+        industry: mapIndustry(company.secteur_gics),
       },
     ],
   };
@@ -94,4 +96,7 @@ export const createOpportunityObject = async (
   return opportunity;
 };
 
+const mapIndustry = (secteur_gics: string) => {
+  return industryHubspotToAceMappingObject[secteur_gics];
+};
 export const main = middyfy(writeOpprtunity);

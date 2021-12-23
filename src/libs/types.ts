@@ -46,15 +46,43 @@ export interface OpportunityInbound {
 }
 
 export interface Company {
-  industry: string | undefined;
+  secteur_gics: string | undefined;
   country: string | undefined;
   domain: string | undefined;
   zip: string | undefined;
   name: string | undefined;
 }
 
+export const industryHubspotToAceMappingObject = {
+  "": "Other and other",
+  Energy: "Power and Utilities",
+  "Bien d'équipement d'industrie": "Manufacturing",
+  "Fabrication de Matériaux": "Manufacturing",
+  "Services Commerciaux et Professionnels": "Professional Services",
+  Transports: "Transportation",
+  Automobile: "Automotive",
+  "Biens de consommation durable et habillement": "Consumer Goods",
+  "Services consommateurs": "Professional Services",
+  Médias: "Media & Entertainment",
+  "Vente au détail": "Wholesale & Distribution",
+  "Vente au détail de produits alimentaires": "Wholesale & Distribution",
+  "Produits Alimentaires, Boissons et Tabac": "Consumer Goods",
+  "Produits domestiques et de soins personnels": "Consumer Goods",
+  "Equipements et services de santé": "Healthcare",
+  "Pharmaceutique et biotechnologies": "Healthcare",
+  Banque: "Financial Services",
+  "Services financiers": "Financial Services",
+  Assurance: "Financial Services",
+  Immobilier: "Real Estate & Construction",
+  "Logiciels et services IT": "Software and internet",
+  "Matériel IT": "Software and internet",
+  "Semi-conducteurs": "Manufacturing",
+  Télécommunication: "Telecommunication",
+  "Services aux collectivités": "Professional Services",
+};
+
 export const companyPorpertiesNeeded = [
-  "industry",
+  "secteur_gics",
   "country",
   "zip",
   "name",
