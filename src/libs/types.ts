@@ -2,25 +2,30 @@ import { EventBridgeEvent } from "aws-lambda/trigger/eventbridge";
 
 export type WebhookEventBridgeEvent = EventBridgeEvent<
   "Webhook",
-  HubspotWebhook
+  HubspotWebhook<stringValue>
 >;
 
-export interface HubspotWebhook {
+export type WebhookEventBridgeEventSimplified = EventBridgeEvent<
+  "Webhook",
+  HubspotWebhook<string>
+>;
+
+interface stringValue {
+  value: string;
+}
+
+export interface Properties<T> {
+  dealname: T;
+  closedate: T;
+  hubspot_owner_id: T;
+}
+
+export interface HubspotWebhook<T> {
   portalId: number;
   objectType: string;
   objectTypeId: string;
   objectId: string;
-  properties: {
-    dealname: {
-      value: string;
-    };
-    closedate: {
-      value: string;
-    };
-    hubspot_owner_id: {
-      value: string;
-    };
-  };
+  properties: Properties<T>;
   version: number;
   secondaryIdentifier: null;
   isDeleted: boolean;

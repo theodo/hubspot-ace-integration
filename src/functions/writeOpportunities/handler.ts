@@ -6,7 +6,9 @@ import {
 import type {
   Company,
   HubspotWebhook,
+  Properties,
   WebhookEventBridgeEvent,
+  WebhookEventBridgeEventSimplified,
 } from "@libs/types";
 import { industryHubspotToAceMappingObject } from "@libs/types";
 import { Client } from "@hubspot/api-client";
@@ -23,7 +25,22 @@ const s3Client = new S3Client({ region: "us-west-2" });
 const writeOpprtunity = async (
   event: WebhookEventBridgeEvent
 ): Promise<void> => {
-  const opportunity = await createOpportunityObject(event.detail);
+  const initProperties: Properties<string> = {
+    dealname: undefined,
+    closedate: undefined,
+    hubspot_owner_id: undefined,
+  };
+  const properties = Object.entries(event.detail.properties).reduce(
+    (o, key) => ({ ...o, [key[0]]: key[1].value }),
+    initProperties
+  );
+  const simplifiedEvent: WebhookEventBridgeEventSimplified = {
+    ...event,
+    detail: { ...event.detail, properties },
+  };
+
+  console.log(simplifiedEvent.detail);
+  const opportunity = await createOpportunityObject(simplifiedEvent.detail);
   console.log(opportunity);
 
   const input: PutObjectCommandInput = {
@@ -39,7 +56,7 @@ const writeOpprtunity = async (
 };
 
 export const createOpportunityObject = async (
-  event: HubspotWebhook
+  event: HubspotWebhook<string>
 ): Promise<AceFileOppurtunityInbound> => {
   const hubspotClient = new Client({
     accessToken: process.env.HUBSPOT_ACCESS_TOKEN,
@@ -86,7 +103,7 @@ export const createOpportunityObject = async (
 
   const owner = (
     await hubspotClient.crm.owners.ownersApi.getById(
-      parseInt(event.properties.hubspot_owner_id.value)
+      parseInt(event.properties.hubspot_owner_id)
     )
   ).body;
 
@@ -96,7 +113,7 @@ export const createOpportunityObject = async (
     opportunities: [
       {
         status: "Draft",
-        customerCompanyName: company.name || event.properties.dealname.value,
+        customerCompanyName: company.name || event.properties.dealname,
         country: company.country || "France",
         postalCode: company.zip || "75017",
         customerTitle: "",
@@ -105,10 +122,13 @@ export const createOpportunityObject = async (
         customerFirstName: "",
         customerEmail: "",
         customerWebsite: company.domain || "theodo.fr",
-        partnerProjectTitle: event.properties.dealname.value,
+        partnerProjectTitle: event.properties.dealname,
         deliveryModel: "Managed Services",
         expectedMonthlyAwsRevenue: 100.0,
         partnerPrimaryNeedFromAws: "For Visibility - No assistance needed",
+        targetCloseDate: moment(parseInt(event.properties.closedate)).format(
+          "YYYY-MM-DD"
+        ),
         primaryContactLastName: owner.lastName,
         primaryContactFirstName: owner.firstName,
         primaryContactEmail: owner.email,
