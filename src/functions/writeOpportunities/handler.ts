@@ -20,6 +20,7 @@ import { middyfy } from "@libs/lambda";
 import moment from "moment";
 import axios, { AxiosRequestConfig } from "axios";
 import _ from "lodash";
+import { PublicOwner } from "@hubspot/api-client/lib/codegen/crm/owners/api";
 
 const s3Client = new S3Client({ region: "us-west-2" });
 
@@ -47,7 +48,7 @@ const writeOpprtunity = async (
   console.log(opportunity);
 
   const input: PutObjectCommandInput = {
-    Key: "opportunity-inbound/TEST_3.json",
+    Key: `opportunity-inbound/TEST_${moment().format("MMDDYYYY24HHmmSS")}.json`,
     Bucket: process.env.BUCKET_NAME,
     Body: JSON.stringify(opportunity),
     ACL: "bucket-owner-full-control",
@@ -94,7 +95,7 @@ export const createOpportunityObject = async (
         partnerProjectTitle: event.properties.dealname,
         deliveryModel: "Managed Services",
         expectedMonthlyAwsRevenue: 100.0,
-        partnerPrimaryNeedFromAws: "For Visibility - No assistance needed",
+        partnerPrimaryNeedFromAws: "For Visibility - No Assistance Needed",
         targetCloseDate: moment(parseInt(event.properties.closedate)).format(
           "YYYY-MM-DD"
         ),
@@ -102,10 +103,9 @@ export const createOpportunityObject = async (
         primaryContactFirstName: owner.firstName,
         primaryContactEmail: owner.email,
         industry: mapIndustry(company.secteur_gics),
-        projectDescription: notes,
-        aWSAccountOwnerName: "TEST owner name",
-        aWSAccountOwnerEmail: "test@test.com",
-        awsAccountId: "111111111111",
+        projectDescription: `La description du projet est issue des notes prises par le commercial lors des différents calls de qualification : '${notes}'`,
+        partnerCrmUniqueIdentifier: "1588143",
+        useCase: "Containers & Serverless",
       },
     ],
   };
@@ -143,7 +143,10 @@ const getCompany = async (
   return _.defaults(fetchedCompany, defaultCompany);
 };
 
-const getNotes = async (dealId: string, hubspotClient: Client) => {
+const getNotes = async (
+  dealId: string,
+  hubspotClient: Client
+): Promise<string> => {
   const {
     body: { results: noteIds },
   } = await hubspotClient.crm.deals.associationsApi.getAll(dealId, "Notes");
@@ -158,7 +161,10 @@ const getNotes = async (dealId: string, hubspotClient: Client) => {
   ).join("\n");
 };
 
-const getOwner = async (hubspot_owner_id: string, hubspotClient: Client) =>
+const getOwner = async (
+  hubspot_owner_id: string,
+  hubspotClient: Client
+): Promise<PublicOwner> =>
   (await hubspotClient.crm.owners.ownersApi.getById(parseInt(hubspot_owner_id)))
     .body;
 
