@@ -63,11 +63,11 @@ export interface Company {
 
 export const industryHubspotToAceMappingObject = {
   "": "Other and other",
-  Energy: "Power and Utilities",
-  "Bien d'équipement d'industrie": "Manufacturing",
+  Energie: "Power and Utilities",
+  "Bien d'équipement industrie": "Manufacturing",
   "Fabrication de Matériaux": "Manufacturing",
   "Services Commerciaux et Professionnels": "Professional Services",
-  Transports: "Transportation",
+  Transports: "Transportation & Logistics",
   Automobile: "Automotive",
   "Biens de consommation durable et habillement": "Consumer Goods",
   "Services consommateurs": "Professional Services",
@@ -82,10 +82,10 @@ export const industryHubspotToAceMappingObject = {
   "Services financiers": "Financial Services",
   Assurance: "Financial Services",
   Immobilier: "Real Estate & Construction",
-  "Logiciels et services IT": "Software and internet",
-  "Matériel IT": "Software and internet",
+  "Logiciels et services IT": "Software & Internet",
+  "Matériel IT": "Software & Internet",
   "Semi-conducteurs": "Manufacturing",
-  Télécommunication: "Telecommunication",
+  Télécommunication: "Telecommunications",
   "Services aux collectivités": "Professional Services",
 };
 
