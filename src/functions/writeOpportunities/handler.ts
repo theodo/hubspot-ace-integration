@@ -79,10 +79,11 @@ export const createOpportunityObject = async (
 
   const opportunity = {
     version: "1",
-    spmsId: "spmsId",
+    spmsId: process.env.SPMS_ID,
     opportunities: [
       {
         status: "Draft",
+        stage: "Prospect",
         customerCompanyName: company.name || event.properties.dealname,
         country: company.country,
         postalCode: company.zip,
