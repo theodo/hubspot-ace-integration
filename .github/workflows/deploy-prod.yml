@@ -19,10 +19,7 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 'lts/fermium'
-      - uses: actions/cache@v2
-        with:
-            path: ~/.npm
-            key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}
+          cache: 'npm'
       - uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: arn:aws:iam::772972000351:role/github-actions
