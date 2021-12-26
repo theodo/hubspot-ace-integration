@@ -1,0 +1,32 @@
+name: Deploy production
+
+on:
+  # This job runs when a new release is published using https://github.com/theodo/hubspot-ace-integration/releases/new
+  release:
+    types: [published]
+  push:
+    branches: [master]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 'lts/fermium'
+      - uses: actions/cache@v2
+        with:
+            path: ~/.npm
+            key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::772972000351:role/github-actions
+          role-session-name: ace-integration-staging
+          aws-region: eu-west-1
+      - run: npm i
+      - run: npx sls deploy
