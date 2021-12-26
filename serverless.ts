@@ -12,6 +12,7 @@ import { hubspotAccessToken } from "src/resources/ssm";
 
 const serverlessConfiguration: AWS & Lift = {
   service: "hubspot-ace-integration",
+  variablesResolutionMode: "20210326",
   frameworkVersion: "2",
   plugins: ["serverless-esbuild", "serverless-lift"],
   constructs: {

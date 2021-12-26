@@ -23,7 +23,6 @@ jobs:
       - uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: arn:aws:iam::772972000351:role/github-actions
-          role-session-name: ace-integration-staging
           aws-region: eu-west-1
       - run: npm i
-      - run: npx sls deploy
+      - run: npx sls deploy --stage prod

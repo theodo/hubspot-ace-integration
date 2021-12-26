@@ -5,7 +5,7 @@
   "main": "serverless.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy:staging": "sls deploy --aws-profile ace-integration-staging",
+    "deploy": "sls deploy --aws-profile ace-integration-staging --stage staging",
     "list-results": "aws s3 ls s3://ace-apn-1588143-beta-us-west-2/opportunity-inbound-processed-results/ --profile apn-crm-integration-staging-assume-role",
     "get-result": "func() { aws s3 cp s3://ace-apn-1588143-beta-us-west-2/opportunity-inbound-processed-results/\"$1\" ./\"$1\" --profile apn-crm-integration-staging-assume-role --acl bucket-owner-full-control; }; func"
   },
