@@ -4,8 +4,6 @@ on:
   # This job runs when a new release is published using https://github.com/theodo/hubspot-ace-integration/releases/new
   release:
     types: [published]
-  push:
-    branches: [master]
 
 permissions:
   id-token: write
