@@ -33,7 +33,6 @@ const serverlessConfiguration: AWS & Lift = {
       NODE_OPTIONS: "--enable-source-maps --stack-trace-limit=1000",
     },
     lambdaHashingVersion: "20201221",
-    profile: "ace-integration-staging",
     eventBridge: {
       useCloudFormation: true,
     },

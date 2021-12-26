@@ -9,7 +9,7 @@ import { stack } from "serverless";
 
 export const ACES3BucketAccessRole = new Role(stack, "ACES3BucketAccessRole", {
   assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
-  roleName: "APN-ACE-Theodo-AccessRole-staging",
+  roleName: "APN-ACE-Theodo-AccessRole",
 });
 
 ACES3BucketAccessRole.addToPolicy(
