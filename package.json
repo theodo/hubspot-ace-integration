@@ -7,7 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "deploy": "sls deploy --aws-profile ace-integration-staging --stage staging",
     "list-results": "aws s3 ls s3://ace-apn-1588143-beta-us-west-2/opportunity-inbound-processed-results/ --profile apn-crm-integration-staging-assume-role",
-    "get-result": "func() { aws s3 cp s3://ace-apn-1588143-beta-us-west-2/opportunity-inbound-processed-results/\"$1\" ./\"$1\" --profile apn-crm-integration-staging-assume-role --acl bucket-owner-full-control; }; func"
+    "list-outbound": "aws s3 ls s3://ace-apn-1588143-beta-us-west-2/opportunity-outbound/ --profile apn-crm-integration-staging-assume-role",
+    "get-result": "func() { aws s3 cp s3://ace-apn-1588143-beta-us-west-2/opportunity-inbound-processed-results/\"$1\" ./testing/results/\"$1\" --profile apn-crm-integration-staging-assume-role --acl bucket-owner-full-control; }; func",
+    "post-inbound": "func() { aws s3 cp ./testing/post-opportunity/\"$1\" s3://ace-apn-1588143-beta-us-west-2/opportunity-inbound/\"$1\" --profile apn-crm-integration-staging-assume-role --acl bucket-owner-full-control; }; func",
+    "get-outbound": "func() { aws s3 cp s3://ace-apn-1588143-beta-us-west-2/opportunity-outbound/\"$1\" ./testing/outbound-opportunity/\"$1\" --profile apn-crm-integration-staging-assume-role --acl bucket-owner-full-control; }; func"
   },
   "engines": {
     "node": ">=14.15.0"
