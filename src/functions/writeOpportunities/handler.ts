@@ -116,8 +116,7 @@ export const createOpportunityObject = async (
         primaryContactEmail: owner.email,
         industry: mapIndustry(company.secteur_gics),
         projectDescription: `La description du projet est issue des notes prises par le commercial lors des différents calls de qualification : '${notes}'`,
-        partnerCrmUniqueIdentifier: dealId,
-        useCase: "Containers & Serverless",
+        partnerCrmUniqueIdentifier: dealId.toString(),
       },
     ],
   };
