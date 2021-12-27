@@ -24,6 +24,8 @@ import { PublicOwner } from "@hubspot/api-client/lib/codegen/crm/owners/api";
 
 const s3Client = new S3Client({ region: "us-west-2" });
 
+const fileExtension = "json";
+
 const writeOpprtunity = async (
   event: WebhookEventBridgeEvent
 ): Promise<void> => {
@@ -47,14 +49,23 @@ const writeOpprtunity = async (
 
   console.log(opportunity);
 
+  const fileName = `opportunity-inbound/TEST_${moment().format(
+    "DD-MM-YYYY_HH:mm:SS"
+  )}`;
+  const Key = `${fileName}.${fileExtension}`;
+  console.log("File Name -->", Key);
+
   const input: PutObjectCommandInput = {
-    Key: `opportunity-inbound/TEST_${moment().format("MMDDYYYY24HHmmSS")}.json`,
+    Key,
     Bucket: process.env.BUCKET_NAME,
     Body: JSON.stringify(opportunity),
     ACL: "bucket-owner-full-control",
   };
   const putCommand = new PutObjectCommand(input);
   await s3Client.send(putCommand);
+
+  // TODO : retrieve apnCrmUniqueIdentifier from result which is [fileName]_result.json
+  // const resultFileName = `${fileName}_result.${fileExtension}`;
 
   return;
 };
@@ -92,7 +103,7 @@ export const createOpportunityObject = async (
         customerLastName: "",
         customerFirstName: "",
         customerEmail: "",
-        customerWebsite: company.domain || "",
+        customerWebsite: company.domain,
         partnerProjectTitle: event.properties.dealname,
         deliveryModel: "Managed Services",
         expectedMonthlyAwsRevenue: 100.0,
@@ -105,7 +116,7 @@ export const createOpportunityObject = async (
         primaryContactEmail: owner.email,
         industry: mapIndustry(company.secteur_gics),
         projectDescription: `La description du projet est issue des notes prises par le commercial lors des différents calls de qualification : '${notes}'`,
-        partnerCrmUniqueIdentifier: "1588143",
+        partnerCrmUniqueIdentifier: dealId,
         useCase: "Containers & Serverless",
       },
     ],
