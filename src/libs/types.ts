@@ -96,3 +96,9 @@ export const companyPorpertiesNeeded = [
   "name",
   "domain",
 ];
+
+export const stageHubspotToAceMappingObject = {};
+
+export interface Deal {
+  apnCrmUniqueidentifier: string;
+}

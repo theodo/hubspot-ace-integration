@@ -93,8 +93,8 @@ export const createOpportunityObject = async (
     spmsId: process.env.SPMS_ID,
     opportunities: [
       {
-        status: "Draft",
-        stage: "Prospect",
+        status: "Draft", // if there is a apnCrmUniqueIdentifier : not Draft because we already sent it
+        stage: "Prospect", // to update with dealstage and matching id dealstage with namings
         customerCompanyName: company.name || event.properties.dealname,
         country: company.country,
         postalCode: company.zip,
