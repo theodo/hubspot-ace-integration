@@ -53,7 +53,7 @@ const writeOpprtunity = async (
     "DD-MM-YYYY_HH:mm:SS"
   )}`;
   const Key = `${fileName}.${fileExtension}`;
-  console.log("File Name -->", Key);
+  console.log("File Name :", Key);
 
   const input: PutObjectCommandInput = {
     Key,
@@ -64,7 +64,7 @@ const writeOpprtunity = async (
   const putCommand = new PutObjectCommand(input);
   await s3Client.send(putCommand);
 
-  // TODO : retrieve apnCrmUniqueIdentifier from result which is [fileName]_result.json
+  // TODO : retrieve apnCrmUniqueIdentifier from result which is [fileName]_result.json if null in deal
   // const resultFileName = `${fileName}_result.${fileExtension}`;
 
   return;
@@ -93,7 +93,7 @@ export const createOpportunityObject = async (
     spmsId: process.env.SPMS_ID,
     opportunities: [
       {
-        status: "Draft", // if there is a apnCrmUniqueIdentifier : not Draft because we already sent it
+        status: "Draft", // if there is a apnCrmUniqueIdentifier : remove status field
         stage: "Prospect", // to update with dealstage and matching id dealstage with namings
         customerCompanyName: company.name || event.properties.dealname,
         country: company.country,
