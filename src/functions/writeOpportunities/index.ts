@@ -1,6 +1,7 @@
 import { handlerPath } from "@libs/handlerResolver";
 import { stack } from "serverless";
 import { hubspotAccessToken } from "src/resources/ssm";
+import { ACES3BucketAccessRole } from "src/resources/iam";
 
 export default {
   handler: `${handlerPath(__dirname)}/handler.main`,
@@ -19,5 +20,6 @@ export default {
     HUBSPOT_ACCESS_TOKEN_PATH: stack.resolve(hubspotAccessToken.parameterName),
     HUBSPOT_API_BASE_URL: "https://api.hubapi.com/crm/v3",
     SPMS_ID: "1588143",
+    ACE_ASSUME_ROLE_ARN: stack.resolve(ACES3BucketAccessRole.roleArn),
   },
 };
