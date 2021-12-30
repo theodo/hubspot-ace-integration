@@ -1,4 +1,7 @@
 import {
+  GetObjectCommand,
+  GetObjectCommandInput,
+  GetObjectCommandOutput,
   PutObjectCommand,
   PutObjectCommandInput,
   S3Client,
@@ -6,11 +9,15 @@ import {
 import type {
   Company,
   HubspotWebhook,
+  OpportunityResult,
   Properties,
   WebhookEventBridgeEvent,
   WebhookEventBridgeEventSimplified,
 } from "@libs/types";
-import { industryHubspotToAceMappingObject } from "@libs/types";
+import {
+  industryHubspotToAceMappingObject,
+  stagesHubspotToAceMappingObject,
+} from "@libs/types";
 import { Client } from "@hubspot/api-client";
 import {
   AceFileOppurtunityInbound,
@@ -21,20 +28,27 @@ import moment from "moment";
 import axios, { AxiosRequestConfig } from "axios";
 import _ from "lodash";
 import { PublicOwner } from "@hubspot/api-client/lib/codegen/crm/owners/api";
+import { Readable } from "stream";
 
 const s3Client = new S3Client({ region: "us-west-2" });
 
 const fileExtension = "json";
+const resultFolderBucket = "opportunity-inbound-processed-results";
 
 const writeOpprtunity = async (
   event: WebhookEventBridgeEvent
 ): Promise<void> => {
+  const hubspotClient = new Client({
+    accessToken: process.env.HUBSPOT_ACCESS_TOKEN,
+  });
   console.log("event", JSON.stringify(event));
 
   const initProperties: Properties<string> = {
     dealname: undefined,
+    dealstage: undefined,
     closedate: undefined,
     hubspot_owner_id: undefined,
+    identifiant_ace: undefined,
   };
   const properties = Object.entries(event.detail.properties).reduce(
     (o, key) => ({ ...o, [key[0]]: key[1].value }),
@@ -45,41 +59,94 @@ const writeOpprtunity = async (
     detail: { ...event.detail, properties },
   };
 
-  const opportunity = await createOpportunityObject(simplifiedEvent.detail);
+  const opportunity = await createOpportunityObject(
+    simplifiedEvent.detail,
+    hubspotClient
+  );
 
-  console.log(opportunity);
+  console.log("opportunity", opportunity);
 
   const fileName = `opportunity-inbound/TEST_${moment().format(
     "DD-MM-YYYY_HH:mm:SS"
   )}`;
-  const Key = `${fileName}.${fileExtension}`;
-  console.log("File Name :", Key);
+  const fileOpportunityPath = `${fileName}.${fileExtension}`;
+  console.log("File Name :", fileOpportunityPath);
 
   const input: PutObjectCommandInput = {
-    Key,
+    Key: fileOpportunityPath,
     Bucket: process.env.BUCKET_NAME,
     Body: JSON.stringify(opportunity),
     ACL: "bucket-owner-full-control",
   };
-  const putCommand = new PutObjectCommand(input);
-  await s3Client.send(putCommand);
-
-  // TODO : retrieve apnCrmUniqueIdentifier from result which is [fileName]_result.json if null in deal
-  // const resultFileName = `${fileName}_result.${fileExtension}`;
+  await s3Client.send(new PutObjectCommand(input));
+  if (!simplifiedEvent.detail.properties.identifiant_ace) {
+    await postApnCrmUniqueIdentifierInHubspot(
+      hubspotClient,
+      fileName,
+      simplifiedEvent.detail
+    );
+  }
 
   return;
 };
 
-export const createOpportunityObject = async (
+const postApnCrmUniqueIdentifierInHubspot = async (
+  hubspotClient: Client,
+  fileName: string,
   event: HubspotWebhook<string>
-): Promise<AceFileOppurtunityInbound> => {
-  const hubspotClient = new Client({
-    accessToken: process.env.HUBSPOT_ACCESS_TOKEN,
+): Promise<void> => {
+  await sleep(5 * 1000);
+  const { objectId: dealId } = event;
+  const fileOpportunityResultPath = `${resultFolderBucket}/${fileName}_result.${fileExtension}`;
+
+  const getfileOpportunityResultInput: GetObjectCommandInput = {
+    Key: fileOpportunityResultPath,
+    Bucket: process.env.BUCKET_NAME,
+  };
+
+  const fileOpportunityResult: GetObjectCommandOutput = await s3Client.send(
+    new GetObjectCommand(getfileOpportunityResultInput)
+  );
+
+  const opportunityResult: OpportunityResult = JSON.parse(
+    (await streamToString(fileOpportunityResult.Body)) as string
+  );
+
+  if (
+    opportunityResult.success === "ALL" &&
+    opportunityResult.inboundApiResults.length > 0
+  ) {
+    const inputHubspotUpdate = {
+      properties: {
+        identifiant_ace:
+          opportunityResult.inboundApiResults[0].apnCrmUniqueIdentifier,
+      },
+    };
+    await hubspotClient.crm.deals.basicApi.update(dealId, inputHubspotUpdate);
+  }
+};
+
+const streamToString = (stream: Readable) =>
+  new Promise((resolve, reject) => {
+    const chunks = [];
+    stream.on("data", (chunk) => chunks.push(chunk));
+    stream.on("error", reject);
+    stream.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
   });
 
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+export const createOpportunityObject = async (
+  event: HubspotWebhook<string>,
+  hubspotClient: Client
+): Promise<AceFileOppurtunityInbound> => {
   const {
     objectId: dealId,
-    properties: { hubspot_owner_id },
+    properties: { hubspot_owner_id, identifiant_ace, dealstage },
   } = event;
 
   const notes = await getNotes(dealId, hubspotClient);
@@ -93,8 +160,8 @@ export const createOpportunityObject = async (
     spmsId: process.env.SPMS_ID,
     opportunities: [
       {
-        status: "Draft", // if there is a apnCrmUniqueIdentifier : remove status field
-        stage: "Prospect", // to update with dealstage and matching id dealstage with namings
+        status: !identifiant_ace && "Draft",
+        stage: stagesHubspotToAceMappingObject[dealstage],
         customerCompanyName: company.name || event.properties.dealname,
         country: company.country,
         postalCode: company.zip,
@@ -115,8 +182,9 @@ export const createOpportunityObject = async (
         primaryContactFirstName: owner.firstName,
         primaryContactEmail: owner.email,
         industry: mapIndustry(company.secteur_gics),
-        projectDescription: `La description du projet est issue des notes prises par le commercial lors des différents calls de qualification : '${notes}'`,
+        projectDescription: notes,
         partnerCrmUniqueIdentifier: dealId.toString(),
+        useCase: "Containers & Serverless",
       },
     ],
   };

@@ -18,6 +18,8 @@ export interface Properties<T> {
   dealname: T;
   closedate: T;
   hubspot_owner_id: T;
+  identifiant_ace: T;
+  dealstage: T;
 }
 
 export interface HubspotWebhook<T> {
@@ -101,4 +103,43 @@ export const stageHubspotToAceMappingObject = {};
 
 export interface Deal {
   apnCrmUniqueidentifier: string;
+}
+
+export const stagesHubspotToAceMappingObject = {
+  "34facc48-0dd1-4e2c-abc8-e88ea6b8889c": "Prospect",
+  "5107775": "Qualified",
+  presentationscheduled: "Closed Lost",
+  "1057888": "Prospect",
+  qualifiedtobuy: "Qualified",
+  closedwon: "Business Validation",
+  "982695": "Closed Lost",
+  appointmentscheduled: "Committed",
+  "1573504": "Launched",
+};
+
+export const stagesAceToHubspotMappingObject = {
+  Prospect: "34facc48-0dd1-4e2c-abc8-e88ea6b8889c",
+  "Closed Lost": "presentationscheduled",
+  Qualified: "qualifiedtobuy",
+  "Business Validation": "closedwon",
+  Committed: "appointmentscheduled",
+  Launched: "1573504",
+};
+
+export interface OpportunityResult {
+  success: string;
+  spmsId: string;
+  isApiError: boolean;
+  inboundApiResults: inboundApiResult[];
+  fileName: string;
+  fileApnProcessedDT: string;
+  apiErrors: string | null;
+}
+
+interface inboundApiResult {
+  warnings: string | null;
+  partnerCrmUniqueIdentifier: string | null;
+  isSuccess: boolean;
+  errors: string | null;
+  apnCrmUniqueIdentifier: string;
 }
