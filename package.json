@@ -19,13 +19,15 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.44.0",
+    "@aws-sdk/credential-providers": "^3.45.0",
     "@hubspot/api-client": "^5.0.0",
     "@middy/core": "^2.5.3",
     "@middy/http-json-body-parser": "^2.5.3",
     "@middy/ssm": "^2.5.4",
     "axios": "^0.24.0",
     "lodash": "^4.17.21",
-    "moment": "^2.29.1"
+    "moment": "^2.29.1",
+    "typebridge": "^0.7.1"
   },
   "devDependencies": {
     "@aws-cdk/aws-iam": "^1.137.0",
