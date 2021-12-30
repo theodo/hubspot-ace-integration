@@ -6,6 +6,7 @@ import {
   PutObjectCommandInput,
   S3Client,
 } from "@aws-sdk/client-s3";
+import { fromTemporaryCredentials } from "@aws-sdk/credential-providers";
 import type {
   Company,
   HubspotWebhook,
@@ -30,7 +31,15 @@ import _ from "lodash";
 import { PublicOwner } from "@hubspot/api-client/lib/codegen/crm/owners/api";
 import { Readable } from "stream";
 
-const s3Client = new S3Client({ region: "us-west-2" });
+const s3Client = new S3Client({
+  region: "us-west-2",
+  credentials: fromTemporaryCredentials({
+    params: {
+      RoleArn: process.env.ACE_ASSUME_ROLE_ARN,
+      RoleSessionName: "ACE_session",
+    },
+  }),
+});
 
 const fileExtension = "json";
 const resultFolderBucket = "opportunity-inbound-processed-results";
@@ -49,6 +58,7 @@ const writeOpprtunity = async (
     closedate: undefined,
     hubspot_owner_id: undefined,
     identifiant_ace: undefined,
+    source_du_deal: undefined,
   };
   const properties = Object.entries(event.detail.properties).reduce(
     (o, key) => ({ ...o, [key[0]]: key[1].value }),
