@@ -6,9 +6,7 @@ export default {
   handler: `${handlerPath(__dirname)}/handler.main`,
   events: [
     {
-      schedule: {
-        rate: "rate(3 hours)",
-      },
+      schedule: "rate(10 hours)",
     },
   ],
   environment: {
