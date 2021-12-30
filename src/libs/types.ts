@@ -20,6 +20,7 @@ export interface Properties<T> {
   hubspot_owner_id: T;
   identifiant_ace: T;
   dealstage: T;
+  source_du_deal: T;
 }
 
 export interface HubspotWebhook<T> {
