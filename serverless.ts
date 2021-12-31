@@ -9,6 +9,7 @@ export const stack = new Stack(app);
 import functions from "@functions/index";
 import { ACES3BucketAccessRole } from "src/resources/iam";
 import { hubspotAccessToken } from "src/resources/ssm";
+import { aceBus } from "src/resources/eventBridge";
 
 const serverlessConfiguration: AWS & Lift = {
   service: "hubspot-ace-integration",
@@ -50,6 +51,11 @@ const serverlessConfiguration: AWS & Lift = {
             Effect: "Allow",
             Action: "ssm:GetParameters",
             Resource: stack.resolve(hubspotAccessToken.parameterArn),
+          },
+          {
+            Effect: "Allow",
+            Action: "events:PutEvents",
+            Resource: stack.resolve(aceBus.eventBusArn),
           },
         ],
       },
