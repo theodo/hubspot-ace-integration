@@ -1,9 +1,9 @@
-import { newlyCreatedOpprutinityEvent } from "@libs/event";
+import { opportunityCreatedEvent } from "@libs/event";
 import { middyfy } from "@libs/lambda";
 import { PublishedEvent } from "typebridge";
 
 export const updateHubspotWithApnId = async (
-  event: PublishedEvent<typeof newlyCreatedOpprutinityEvent>
+  event: PublishedEvent<typeof opportunityCreatedEvent>
 ): Promise<void> => {
   console.log("Event", event);
 
