@@ -16,7 +16,7 @@ ACES3BucketAccessRole.addToPolicy(
   new PolicyStatement({
     effect: Effect.ALLOW,
     actions: ["s3:ListBucket"],
-    resources: ["arn:aws:s3:::ace-apn-1588143-beta-us-west-2"],
+    resources: ["arn:aws:s3:::${param:aceBucketName}"],
   })
 );
 
@@ -32,7 +32,7 @@ ACES3BucketAccessRole.addToPolicy(
       "s3:PutObject",
       "s3:PutObjectAcl",
     ],
-    resources: ["arn:aws:s3:::ace-apn-1588143-beta-us-west-2/*"],
+    resources: ["arn:aws:s3:::${param:aceBucketName}/*"],
   })
 );
 

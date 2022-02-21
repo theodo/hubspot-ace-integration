@@ -61,6 +61,14 @@ const serverlessConfiguration: AWS & Lift = {
       },
     },
   },
+  params: {
+    staging: {
+      aceBucketName: "ace-apn-1588143-beta-us-west-2",
+    },
+    prod: {
+      aceBucketName: "ace-apn-1588143-beta-us-west-2", // @TODO: change for prod value
+    },
+  },
   // import the function via paths
   functions,
   package: { individually: true },
