@@ -14,7 +14,7 @@ import { aceBus } from "src/resources/eventBridge";
 const serverlessConfiguration: AWS & Lift = {
   service: "hubspot-ace-integration",
   variablesResolutionMode: "20210326",
-  frameworkVersion: "2",
+  frameworkVersion: "3",
   plugins: ["serverless-esbuild", "serverless-lift"],
   constructs: {
     "hubspot-webhook": {
