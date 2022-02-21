@@ -1,4 +1,4 @@
-import { newlyCreatedOpprutinityEvent } from "@libs/event";
+import { opportunityCreatedEvent } from "@libs/event";
 import { handlerPath } from "@libs/handlerResolver";
 import { stack } from "serverless";
 import { aceBus } from "src/resources/eventBridge";
@@ -10,12 +10,14 @@ export default {
     {
       eventBridge: {
         eventBus: stack.resolve(aceBus.eventBusArn),
-        pattern: newlyCreatedOpprutinityEvent.pattern,
+        pattern: opportunityCreatedEvent.pattern,
+        retryPolicy: {
+          maximumRetryAttempts: 1,
+        },
       },
     },
   ],
   environment: {
-    BUCKET_NAME: "ace-apn-1588143-beta-us-west-2",
     ACE_BUS_NAME: stack.resolve(aceBus.eventBusName),
     SPMS_ID: "1588143",
     HUBSPOT_ACCESS_TOKEN_PATH: stack.resolve(hubspotAccessToken.parameterName),

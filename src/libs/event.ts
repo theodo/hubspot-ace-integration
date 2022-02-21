@@ -6,7 +6,7 @@ export const EventBus = new Bus({
   EventBridge: new EventBridge(),
 });
 
-export const newlyCreatedOpprutinityPayloadSchema = {
+export const opportunityCreatedPayloadSchema = {
   type: "object",
   properties: {
     apnCrmUniqueIdentifier: { type: "string" },
@@ -15,9 +15,9 @@ export const newlyCreatedOpprutinityPayloadSchema = {
   additionalProperties: false,
 } as const;
 
-export const newlyCreatedOpprutinityEvent = new Event({
-  name: "newlyCreatedOpprutinityEvent",
+export const opportunityCreatedEvent = new Event({
+  name: "OpportunityCreatedEvent",
   bus: EventBus,
-  schema: newlyCreatedOpprutinityPayloadSchema,
-  source: "mySource",
+  schema: opportunityCreatedPayloadSchema,
+  source: "Lambda",
 });

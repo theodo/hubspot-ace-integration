@@ -16,7 +16,7 @@ export default {
     },
   ],
   environment: {
-    BUCKET_NAME: "ace-apn-1588143-beta-us-west-2",
+    BUCKET_NAME: "${param:aceBucketName}",
     HUBSPOT_ACCESS_TOKEN_PATH: stack.resolve(hubspotAccessToken.parameterName),
     HUBSPOT_API_BASE_URL: "https://api.hubapi.com/crm/v3",
     SPMS_ID: "1588143",
