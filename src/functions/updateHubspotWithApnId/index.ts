@@ -9,7 +9,7 @@ export default {
   events: [
     {
       eventBridge: {
-        eventBus: stack.resolve(aceBus.eventBusArn),
+        eventBus: stack.resolve(aceBus.eventBusName),
         pattern: opportunityCreatedEvent.pattern,
         retryPolicy: {
           maximumRetryAttempts: 1,

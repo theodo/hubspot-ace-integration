@@ -1,6 +1,8 @@
+import { stack } from "serverless";
 import { handlerPath } from "@libs/handlerResolver";
+import { ACES3BucketAccessRole } from "src/resources/iam";
 
-export default {
+export const dispatchOpportunityInboundProcessedResult = {
   handler: `${handlerPath(__dirname)}/handler.main`,
   events: [
     {
@@ -9,5 +11,6 @@ export default {
   ],
   environment: {
     BUCKET_NAME: "${param:aceBucketName}",
+    ACE_ASSUME_ROLE_ARN: stack.resolve(ACES3BucketAccessRole.roleArn),
   },
 };

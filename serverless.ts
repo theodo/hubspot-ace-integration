@@ -6,7 +6,7 @@ import { App, Stack } from "@aws-cdk/core";
 // TODO make initialization in a separate file
 const app = new App();
 export const stack = new Stack(app);
-import functions from "@functions/index";
+import { functions } from "@functions/index";
 import { ACES3BucketAccessRole } from "src/resources/iam";
 import { hubspotAccessToken } from "src/resources/ssm";
 import { aceBus } from "src/resources/eventBridge";
