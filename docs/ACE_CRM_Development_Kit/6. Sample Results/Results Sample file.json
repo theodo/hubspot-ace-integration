@@ -1,0 +1,13 @@
+{ 
+"success":"ALL",
+"isApiError":false,
+"inboundApiResults":[ 
+{ 
+"partnerCrmUniqueIdentifier":null,
+"isSuccess":true,
+"errors":null,
+"apnCrmUniqueIdentifier":"L80446"
+}
+],
+"apiErrors":null
+}
