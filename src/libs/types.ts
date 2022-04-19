@@ -34,7 +34,7 @@ export interface HubspotWebhook<T> {
   isDeleted: boolean;
 }
 
-export interface AceFileOppurtunityInbound {
+export interface AceFileOpportunityInbound {
   version: string;
   spmsId: string;
   opportunities: Array<OpportunityInbound>;
@@ -54,6 +54,16 @@ export interface OpportunityInbound {
   expectedMonthlyAwsRevenue: number;
   partnerPrimaryNeedFromAws: string;
   targetCloseDate: string;
+  stage: string;
+  country: string;
+  postalCode: string;
+  primaryContactLastName: string;
+  primaryContactFirstName: string;
+  primaryContactEmail: string;
+  industry: string;
+  projectDescription: string;
+  partnerCrmUniqueIdentifier: string;
+  useCase: string;
 }
 
 export interface Company {
@@ -92,7 +102,7 @@ export const industryHubspotToAceMappingObject = {
   "Services aux collectivités": "Professional Services",
 };
 
-export const companyPorpertiesNeeded = [
+export const companyPropertiesNeeded = [
   "secteur_gics",
   "country",
   "zip",
