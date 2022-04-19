@@ -4,7 +4,7 @@
   "description": "Serverless aws-nodejs-typescript template",
   "main": "serverless.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "deploy": "sls deploy --aws-profile ace-integration-staging --stage staging",
     "list-results": "aws s3 ls s3://ace-apn-1588143-beta-us-west-2/opportunity-inbound-processed-results/ --profile apn-crm-integration-staging-assume-role",
     "list-outbound": "aws s3 ls s3://ace-apn-1588143-beta-us-west-2/opportunity-outbound/ --profile apn-crm-integration-staging-assume-role",
