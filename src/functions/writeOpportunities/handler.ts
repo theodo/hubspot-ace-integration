@@ -8,6 +8,7 @@ import {
 } from "@aws-sdk/client-s3";
 import { fromTemporaryCredentials } from "@aws-sdk/credential-providers";
 import type {
+  AceFileOpportunityInbound,
   Company,
   HubspotWebhook,
   OpportunityResult,
@@ -16,14 +17,11 @@ import type {
   WebhookEventBridgeEventSimplified,
 } from "@libs/types";
 import {
+  companyPropertiesNeeded,
   industryHubspotToAceMappingObject,
   stagesHubspotToAceMappingObject,
 } from "@libs/types";
 import { Client } from "@hubspot/api-client";
-import {
-  AceFileOppurtunityInbound,
-  companyPorpertiesNeeded,
-} from "@libs/types";
 import { middyfy } from "@libs/lambda";
 import moment from "moment";
 import axios, { AxiosRequestConfig } from "axios";
@@ -44,7 +42,7 @@ const s3Client = new S3Client({
 const fileExtension = "json";
 const resultFolderBucket = "opportunity-inbound-processed-results";
 
-const writeOpprtunity = async (
+const writeOpportunity = async (
   event: WebhookEventBridgeEvent
 ): Promise<void> => {
   const hubspotClient = new Client({
@@ -76,6 +74,7 @@ const writeOpprtunity = async (
 
   console.log("opportunity", opportunity);
 
+  // TODO: remove test from filename
   const fileName = `opportunity-inbound/TEST_${moment().format(
     "DD-MM-YYYY_HH:mm:SS"
   )}`;
@@ -105,7 +104,9 @@ const postApnCrmUniqueIdentifierInHubspot = async (
   fileName: string,
   event: HubspotWebhook<string>
 ): Promise<void> => {
+  // TODO: explain the need to sleep for 5s
   await sleep(5 * 1000);
+
   const { objectId: dealId } = event;
   const fileOpportunityResultPath = `${resultFolderBucket}/${fileName}_result.${fileExtension}`;
 
@@ -153,7 +154,7 @@ function sleep(ms) {
 export const createOpportunityObject = async (
   event: HubspotWebhook<string>,
   hubspotClient: Client
-): Promise<AceFileOppurtunityInbound> => {
+): Promise<AceFileOpportunityInbound> => {
   const {
     objectId: dealId,
     properties: { hubspot_owner_id, identifiant_ace, dealstage },
@@ -165,7 +166,7 @@ export const createOpportunityObject = async (
 
   const owner = await getOwner(hubspot_owner_id, hubspotClient);
 
-  const opportunity = {
+  return {
     version: "1",
     spmsId: process.env.SPMS_ID,
     opportunities: [
@@ -198,8 +199,6 @@ export const createOpportunityObject = async (
       },
     ],
   };
-
-  return opportunity;
 };
 
 const getCompany = async (
@@ -224,7 +223,7 @@ const getCompany = async (
     ? (
         await hubspotClient.crm.companies.basicApi.getById(
           companyId,
-          companyPorpertiesNeeded
+          companyPropertiesNeeded
         )
       ).body.properties
     : undefined;
@@ -288,4 +287,4 @@ const cleanTextFromHtmlTags = (html: string) => {
   return html.replace(/<[^>]+>/g, "");
 };
 
-export const main = middyfy(writeOpprtunity);
+export const main = middyfy(writeOpportunity);

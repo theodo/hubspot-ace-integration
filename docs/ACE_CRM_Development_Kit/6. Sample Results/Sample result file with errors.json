@@ -1,0 +1,18 @@
+{
+	"success": "NONE",
+	"spmsId": "123456",
+	"isApiError": false,
+	"inboundApiResults": [
+		{
+			"partnerCrmUniqueIdentifier": "OP004149",
+			"isSuccess": false,
+			"errors": [
+				"User not found for Opportunity Owner email:xyz.abc@test.com"
+			],
+			"apnCrmUniqueIdentifier": null
+		}
+	],
+	"fileName": "opportunity-inbound/test-2020-05-28T01:21:20.json",
+	"fileApnProcessedDT": "2020-05-28T15:21:22.331Z",
+	"apiErrors": null
+}

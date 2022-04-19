@@ -10,3 +10,5 @@ jspm_packages
 
 # Local stesting
 testing
+
+*.DS_Store
