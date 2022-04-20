@@ -1,14 +1,14 @@
 import {
+  AccountPrincipal,
   Effect,
   PolicyStatement,
   Role,
-  ServicePrincipal,
 } from "@aws-cdk/aws-iam";
 
 import { stack } from "serverless";
 
 export const ACES3BucketAccessRole = new Role(stack, "ACES3BucketAccessRole", {
-  assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
+  assumedBy: new AccountPrincipal(stack.account),
   roleName: "APN-ACE-Theodo-AccessRole-${sls:stage}",
 });
 
