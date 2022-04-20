@@ -12,7 +12,7 @@ import { hubspotAccessToken } from "src/resources/ssm";
 import { aceBus } from "src/resources/eventBridge";
 
 const serverlessConfiguration: AWS & Lift = {
-  service: "hubspot-ace-integration",
+  service: "hubspot-ace",
   variablesResolutionMode: "20210326",
   frameworkVersion: "3",
   plugins: ["serverless-esbuild", "serverless-lift"],
