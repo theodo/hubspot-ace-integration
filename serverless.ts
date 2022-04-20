@@ -57,6 +57,16 @@ const serverlessConfiguration: AWS & Lift = {
             Action: "events:PutEvents",
             Resource: stack.resolve(aceBus.eventBusArn),
           },
+          {
+            Effect: "Allow",
+            Resource: "arn:aws:s3:::mock-apn-bucket-adeleg",
+            Action: "s3:ListBucket",
+          },
+          {
+            Effect: "Allow",
+            Resource: "arn:aws:s3:::mock-apn-bucket-adeleg/*",
+            Action: "s3:GetObject",
+          },
         ],
       },
     },
