@@ -7,21 +7,20 @@ import {
   ListObjectsCommandInput,
   S3Client,
 } from "@aws-sdk/client-s3";
+import { fromTemporaryCredentials } from "@aws-sdk/credential-providers";
 import { opportunityCreatedEvent } from "@libs/event";
 import { OpportunityResult } from "@libs/types";
 import { Readable } from "stream";
 
 const s3Client = new S3Client({
-  // region: "us-west-2",
-  // credentials: fromTemporaryCredentials({
-  //   params: {
-  //     RoleArn: process.env.ACE_ASSUME_ROLE_ARN,
-  //     RoleSessionName: "ACE_session",
-  //   },
-  // }),
+  region: "us-west-2",
+  credentials: fromTemporaryCredentials({
+    params: {
+      RoleArn: process.env.ACE_ASSUME_ROLE_ARN,
+      RoleSessionName: "ACE_session",
+    },
+  }),
 });
-
-const MOCK_BUCKET_NAME = "mock-apn-bucket-adeleg";
 
 export const main = async (): Promise<void> => {
   // Get all file names since last time
@@ -46,9 +45,9 @@ export const main = async (): Promise<void> => {
 };
 
 const listProcessedInboundOpportunities = async (): Promise<string[]> => {
-  const prefix = "opportunity-inbound-processed-results";
+  const prefix = "opportunity-inbound-processed-results/";
   const listInput: ListObjectsCommandInput = {
-    Bucket: MOCK_BUCKET_NAME,
+    Bucket: process.env.BUCKET_NAME,
     Prefix: prefix,
   };
   const listCommand = new ListObjectsCommand(listInput);
@@ -66,7 +65,7 @@ const publishEvents = async (fileKeys: string[]) => {
     fileKeys.map(async (fileKey, index) => {
       const getFileOpportunityResultInput: GetObjectCommandInput = {
         Key: fileKey,
-        Bucket: MOCK_BUCKET_NAME,
+        Bucket: process.env.BUCKET_NAME,
       };
       const fileOpportunityResult: GetObjectCommandOutput = await s3Client.send(
         new GetObjectCommand(getFileOpportunityResultInput)
@@ -78,6 +77,11 @@ const publishEvents = async (fileKeys: string[]) => {
 
       return Promise.all(
         opportunityResult.inboundApiResults.map(async (opportunityData) => {
+          if (!opportunityData.isSuccess) {
+            // TODO : handle errors
+            return;
+          }
+
           const event = {
             apnCrmUniqueIdentifier: opportunityData.apnCrmUniqueIdentifier,
             partnerCrmUniqueIdentifier:
@@ -96,7 +100,7 @@ const publishEvents = async (fileKeys: string[]) => {
 
 const deleteReadObjects = async (fileKeys: string[]) => {
   const deleteObjectsCommand = new DeleteObjectsCommand({
-    Bucket: MOCK_BUCKET_NAME,
+    Bucket: process.env.BUCKET_NAME,
     Delete: {
       Objects: fileKeys.map((fileKey) => ({
         Key: fileKey,
