@@ -36,6 +36,8 @@ const s3Client = new S3Client({
 
 const fileExtension = "json";
 
+const DEFAULT_DESCRIPTION = "OPPORTUNITE AWS M33 GROUP - DESCRIPTION A VENIR";
+
 const writeOpportunity = async (
   event: WebhookEventBridgeEvent
 ): Promise<void> => {
@@ -174,7 +176,7 @@ const getNotes = async (
     body: { results: noteIds },
   } = await hubspotClient.crm.deals.associationsApi.getAll(dealId, "Notes");
 
-  return (
+  const notes = (
     await Promise.all(
       noteIds.map(
         async ({ id }) =>
@@ -182,6 +184,12 @@ const getNotes = async (
       )
     )
   ).join("\n");
+
+  if (notes.length <= 25) {
+    return DEFAULT_DESCRIPTION;
+  }
+
+  return notes;
 };
 
 const getOwner = async (
