@@ -64,8 +64,9 @@ const serverlessConfiguration: AWS & Lift = {
           },
           {
             Effect: "Allow",
-            Resource: "arn:aws:s3:::mock-apn-bucket-adeleg/*",
-            Action: "s3:GetObject",
+            Resource:
+              "arn:aws:s3:::mock-apn-bucket-adeleg/opportunity-inbound-processed-results/*",
+            Action: ["s3:GetObject", "s3:DeleteObject"],
           },
         ],
       },

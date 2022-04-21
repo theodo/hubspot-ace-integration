@@ -1,4 +1,5 @@
 import {
+  DeleteObjectsCommand,
   GetObjectCommand,
   GetObjectCommandInput,
   GetObjectCommandOutput,
@@ -6,7 +7,6 @@ import {
   ListObjectsCommandInput,
   S3Client,
 } from "@aws-sdk/client-s3";
-import { fromTemporaryCredentials } from "@aws-sdk/credential-providers";
 import { opportunityCreatedEvent } from "@libs/event";
 import { OpportunityResult } from "@libs/types";
 import { Readable } from "stream";
@@ -28,35 +28,18 @@ export const main = async (): Promise<void> => {
   const processedOpportunities = await listProcessedInboundOpportunities();
   console.log("Processed Opportunities Files", processedOpportunities);
 
-  // For each file name
-  // Get content
-  // Put event if update was successful
+  if (processedOpportunities.length === 0) {
+    console.log("Nothing new to process");
 
-  await Promise.all(
-    processedOpportunities.map(async (fileKey, index) => {
-      const getFileOpportunityResultInput: GetObjectCommandInput = {
-        Key: fileKey,
-        Bucket: MOCK_BUCKET_NAME,
-      };
-      const fileOpportunityResult: GetObjectCommandOutput = await s3Client.send(
-        new GetObjectCommand(getFileOpportunityResultInput)
-      );
-      const opportunityResult: OpportunityResult = JSON.parse(
-        (await streamToString(fileOpportunityResult.Body)) as string
-      );
-      console.log(`Opportunity ${index} content`, opportunityResult);
+    return;
+  }
 
-      const event = {
-        apnCrmUniqueIdentifier:
-          opportunityResult.inboundApiResults[0].apnCrmUniqueIdentifier,
-        partnerCrmUniqueIdentifier:
-          opportunityResult.inboundApiResults[0].partnerCrmUniqueIdentifier,
-      };
-
-      await opportunityCreatedEvent.publish(event);
-
-      return event;
-    })
+  const publishedEvents = await publishEvents(processedOpportunities);
+  console.log(`Successfully published ${publishedEvents.length}`);
+  const deleteObjectsResponse = await deleteReadObjects(processedOpportunities);
+  console.log(
+    "Successfully deleted read objects from bucket",
+    deleteObjectsResponse
   );
 
   return;
@@ -76,6 +59,52 @@ const listProcessedInboundOpportunities = async (): Promise<string[]> => {
   return processedOpportunities.Contents.map((file) => file.Key).filter(
     (key) => key !== `${prefix}/`
   );
+};
+
+const publishEvents = async (fileKeys: string[]) => {
+  const events = await Promise.all(
+    fileKeys.map(async (fileKey, index) => {
+      const getFileOpportunityResultInput: GetObjectCommandInput = {
+        Key: fileKey,
+        Bucket: MOCK_BUCKET_NAME,
+      };
+      const fileOpportunityResult: GetObjectCommandOutput = await s3Client.send(
+        new GetObjectCommand(getFileOpportunityResultInput)
+      );
+      const opportunityResult: OpportunityResult = JSON.parse(
+        (await streamToString(fileOpportunityResult.Body)) as string
+      );
+      console.log(`Opportunity ${index} content`, opportunityResult);
+
+      return Promise.all(
+        opportunityResult.inboundApiResults.map(async (opportunityData) => {
+          const event = {
+            apnCrmUniqueIdentifier: opportunityData.apnCrmUniqueIdentifier,
+            partnerCrmUniqueIdentifier:
+              opportunityData.partnerCrmUniqueIdentifier,
+          };
+          await opportunityCreatedEvent.publish(event);
+
+          return event;
+        })
+      );
+    })
+  );
+
+  return events.flat();
+};
+
+const deleteReadObjects = async (fileKeys: string[]) => {
+  const deleteObjectsCommand = new DeleteObjectsCommand({
+    Bucket: MOCK_BUCKET_NAME,
+    Delete: {
+      Objects: fileKeys.map((fileKey) => ({
+        Key: fileKey,
+      })),
+    },
+  });
+
+  return s3Client.send(deleteObjectsCommand);
 };
 
 const streamToString = (stream: Readable) =>
