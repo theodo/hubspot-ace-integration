@@ -19,7 +19,7 @@ export default {
   ],
   environment: {
     ACE_BUS_NAME: stack.resolve(aceBus.eventBusName),
-    SPMS_ID: "1588143",
+    SPMS_ID: "${param:spmsId}",
     HUBSPOT_ACCESS_TOKEN_PATH: stack.resolve(hubspotAccessToken.parameterName),
     HUBSPOT_API_BASE_URL: "https://api.hubapi.com/crm/v3",
   },
