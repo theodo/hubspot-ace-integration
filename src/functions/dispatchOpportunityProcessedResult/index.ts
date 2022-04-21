@@ -3,7 +3,7 @@ import { handlerPath } from "@libs/handlerResolver";
 import { ACES3BucketAccessRole } from "src/resources/iam";
 import { aceBus } from "src/resources/eventBridge";
 
-export const dispatchOpportunityInboundProcessedResult = {
+export const dispatchOpportunityProcessedResult = {
   handler: `${handlerPath(__dirname)}/handler.main`,
   events: [
     {
