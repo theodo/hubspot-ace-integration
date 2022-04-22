@@ -50,13 +50,15 @@ const listProcessedInboundOpportunities = async (): Promise<string[]> => {
     Bucket: process.env.BUCKET_NAME,
     Prefix: prefix,
   };
+
   const listCommand = new ListObjectsCommand(listInput);
 
+  // TODO: handle the cas when results are paginated over a single page
   const processedOpportunities = await s3Client.send(listCommand);
   console.log(processedOpportunities);
 
   return processedOpportunities.Contents.map((file) => file.Key).filter(
-    (key) => key !== `${prefix}/`
+    (key) => key !== prefix
   );
 };
 
