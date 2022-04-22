@@ -19,7 +19,7 @@ export default {
     BUCKET_NAME: "${param:aceBucketName}",
     HUBSPOT_ACCESS_TOKEN_PATH: stack.resolve(hubspotAccessToken.parameterName),
     HUBSPOT_API_BASE_URL: "https://api.hubapi.com/crm/v3",
-    SPMS_ID: "1588143",
+    SPMS_ID: "${param:spmsId}",
     ACE_ASSUME_ROLE_ARN: stack.resolve(ACES3BucketAccessRole.roleArn),
   },
 };

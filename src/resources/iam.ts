@@ -1,14 +1,14 @@
 import {
+  AccountPrincipal,
   Effect,
   PolicyStatement,
   Role,
-  ServicePrincipal,
 } from "@aws-cdk/aws-iam";
 
 import { stack } from "serverless";
 
 export const ACES3BucketAccessRole = new Role(stack, "ACES3BucketAccessRole", {
-  assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
+  assumedBy: new AccountPrincipal(stack.account),
   roleName: "APN-ACE-Theodo-AccessRole-${sls:stage}",
 });
 
@@ -46,8 +46,6 @@ ACES3BucketAccessRole.addToPolicy(
       "kms:GenerateDataKey*",
       "kms:DescribeKey",
     ],
-    resources: [
-      "arn:aws:kms:us-west-2:460522042068:key/8df608f6-7332-4678-af42-722e706b829d",
-    ],
+    resources: ["${param:apnKmsArn}"],
   })
 );
