@@ -9,8 +9,7 @@ export const EventBus = new Bus({
 export const opportunityCreatedPayloadSchema = {
   type: "object",
   properties: {
-    apnCrmUniqueIdentifier: { type: "string" },
-    partnerCrmUniqueIdentifier: { type: "string" },
+    fileKey: { type: "string" },
   },
   additionalProperties: false,
 } as const;

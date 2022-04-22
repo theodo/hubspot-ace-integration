@@ -141,13 +141,13 @@ export interface OpportunityResult {
   success: string;
   spmsId: string;
   isApiError: boolean;
-  inboundApiResults: inboundApiResult[];
+  inboundApiResults: InboundApiResult[];
   fileName: string;
   fileApnProcessedDT: string;
   apiErrors: string | null;
 }
 
-interface inboundApiResult {
+export interface InboundApiResult {
   warnings: string | null;
   partnerCrmUniqueIdentifier: string | null;
   isSuccess: boolean;
