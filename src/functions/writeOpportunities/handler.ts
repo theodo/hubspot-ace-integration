@@ -1,7 +1,8 @@
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { fromTemporaryCredentials } from "@aws-sdk/credential-providers";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
 import moment from "moment";
 
+import { s3Client } from "@libs/s3/client";
+import { hubspotClient } from "@libs/hubspot/client";
 import type {
   Properties,
   WebhookEventBridgeEvent,
@@ -9,22 +10,14 @@ import type {
 } from "@libs/types";
 import { middyfy } from "@libs/lambda";
 
-import { hubspotClient } from "./utils/hubspot";
 import { createOpportunityObject } from "./utils/createOpportunityObject";
-
-const s3Client = new S3Client({
-  region: "us-west-2",
-  credentials: fromTemporaryCredentials({
-    params: {
-      RoleArn: process.env.ACE_ASSUME_ROLE_ARN,
-      RoleSessionName: "ACE_session",
-    },
-  }),
-});
 
 const writeOpportunity = async (
   event: WebhookEventBridgeEvent
 ): Promise<void> => {
+  /**
+   * @debt refacto "Hydrate hubspotClient accessToken in middleware"
+   */
   hubspotClient.setAccessToken(process.env.HUBSPOT_ACCESS_TOKEN);
 
   console.log("event", JSON.stringify(event));
