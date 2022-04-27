@@ -29,7 +29,8 @@
     "axios": "^0.24.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
-    "typebridge": "^0.7.1"
+    "typebridge": "^0.7.1",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@aws-cdk/aws-events": "^1.137.0",
@@ -41,6 +42,7 @@
     "@types/aws-lambda": "^8.10.71",
     "@types/jest": "^27.0.3",
     "@types/node": "^14.14.25",
+    "@types/yup": "^0.29.13",
     "@typescript-eslint/eslint-plugin": "^5.8.0",
     "@typescript-eslint/parser": "^5.8.0",
     "aws-sdk-client-mock": "^0.6.2",
