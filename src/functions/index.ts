@@ -4,6 +4,6 @@ import updateHubspotWithApnId from "./updateHubspotWithApnId";
 
 export const functions = {
   writeOpportunities,
-  dispatchOpportunityProcessedResult,
+  dispatchOpportunityProcessedRslt: dispatchOpportunityProcessedResult,
   updateHubspotWithApnId,
 };
