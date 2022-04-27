@@ -1,16 +1,13 @@
 import { PutObjectCommand } from "@aws-sdk/client-s3";
-import moment from "moment";
 
 import { s3Client } from "@libs/s3/client";
 import { hubspotClient } from "@libs/hubspot/client";
-import type {
-  Properties,
-  WebhookEventBridgeEvent,
-  WebhookEventBridgeEventSimplified,
-} from "@libs/types";
+import type { WebhookEventBridgeEvent } from "@libs/types";
 import { middyfy } from "@libs/lambda";
 
 import { createOpportunityObject } from "./utils/createOpportunityObject";
+import { simplifyWebhookEvent } from "./utils/simplifyWebhookEvent";
+import { getAceOpportunityFilename } from "./utils/getAceOpportunityFilename";
 
 const writeOpportunity = async (
   event: WebhookEventBridgeEvent
@@ -22,41 +19,19 @@ const writeOpportunity = async (
 
   console.log("event", JSON.stringify(event));
 
-  const initProperties: Properties<string> = {
-    dealname: undefined,
-    dealstage: undefined,
-    closedate: undefined,
-    hubspot_owner_id: undefined,
-    identifiant_ace: undefined,
-    source_du_deal: undefined,
-  };
+  const { detail: simplifiedEventDetail } = simplifyWebhookEvent(event);
 
-  const properties = Object.entries(event.detail.properties).reduce(
-    (o, key) => ({ ...o, [key[0]]: key[1].value }),
-    initProperties
-  );
-
-  const simplifiedEvent: WebhookEventBridgeEventSimplified = {
-    ...event,
-    detail: { ...event.detail, properties },
-  };
-
-  const opportunity = await createOpportunityObject(simplifiedEvent.detail);
+  const opportunity = await createOpportunityObject(simplifiedEventDetail);
 
   console.log("opportunity", opportunity);
 
-  // TODO: remove test from filename
-  const fileName = `opportunity-inbound/TEST_${moment().format(
-    "DD-MM-YYYY_HH:mm:SS"
-  )}`;
+  const aceOpportunityFilename = getAceOpportunityFilename();
 
-  const fileOpportunityPath = `${fileName}.json`;
-
-  console.log("File Name :", fileOpportunityPath);
+  console.log("File Name :", aceOpportunityFilename);
 
   await s3Client.send(
     new PutObjectCommand({
-      Key: fileOpportunityPath,
+      Key: aceOpportunityFilename,
       Bucket: process.env.BUCKET_NAME,
       Body: JSON.stringify(opportunity),
       ACL: "bucket-owner-full-control",
@@ -65,3 +40,16 @@ const writeOpportunity = async (
 };
 
 export const main = middyfy(writeOpportunity);
+
+interface EnvironmentVars {
+  NAME: string;
+  OS: string;
+
+  // Unknown properties are covered by this index signature.
+  [propName: string]: string;
+}
+
+declare const env: EnvironmentVars;
+const sysName = env.NAME;
+const os = env.OS;
+const nodeEnv = env.NODE_ENV;

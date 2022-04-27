@@ -1,34 +1,39 @@
 import { EventBridgeEvent } from "aws-lambda/trigger/eventbridge";
 
+interface HubspotValue {
+  versions: {
+    name: string;
+    value: string;
+    timestamp: number;
+    sourceId: string;
+    source: string;
+    sourceVid: unknown[];
+    requestId?: string;
+    updatedByUserId?: number;
+  }[];
+  value: string;
+  timestamp: number;
+  source: string;
+  sourceId: string;
+  updatedByUserId?: number;
+}
+
 export type WebhookEventBridgeEvent = EventBridgeEvent<
   "Webhook",
-  HubspotWebhook<stringValue>
+  HubspotWebhook<HubspotValue>
 >;
 
-export type WebhookEventBridgeEventSimplified = EventBridgeEvent<
+export type WebhookEventBridgeEventWrapped = EventBridgeEvent<
   "Webhook",
   HubspotWebhook<string>
 >;
-
-interface stringValue {
-  value: string;
-}
-
-export interface Properties<T> {
-  dealname: T;
-  closedate: T;
-  hubspot_owner_id: T;
-  identifiant_ace: T;
-  dealstage: T;
-  source_du_deal: T;
-}
 
 export interface HubspotWebhook<T> {
   portalId: number;
   objectType: string;
   objectTypeId: string;
-  objectId: string;
-  properties: Properties<T>;
+  objectId: number;
+  properties: Record<string, T>;
   version: number;
   secondaryIdentifier: null;
   isDeleted: boolean;
@@ -74,7 +79,7 @@ export interface Company {
   name: string | undefined;
 }
 
-export const industryHubspotToAceMappingObject = {
+export const hubspotToAceIndustryMappingObject = {
   "": "Other and other",
   Energie: "Power and Utilities",
   "Bien d'équipement industrie": "Manufacturing",

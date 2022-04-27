@@ -6,10 +6,6 @@ import {
 import { fromTemporaryCredentials } from "@aws-sdk/credential-providers";
 import { EventBus, opportunityCreatedEvent } from "@libs/event";
 
-import { opportunityCreatedEvent } from "@libs/event";
-import { OpportunityResult } from "@libs/types";
-import { Readable } from "stream";
-
 const s3Client = new S3Client({
   region: "us-west-2",
   credentials: fromTemporaryCredentials({

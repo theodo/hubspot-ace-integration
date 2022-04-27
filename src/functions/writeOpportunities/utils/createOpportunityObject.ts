@@ -2,7 +2,7 @@ import moment from "moment";
 
 import type { AceFileOpportunityInbound, HubspotWebhook } from "@libs/types";
 import {
-  industryHubspotToAceMappingObject,
+  hubspotToAceIndustryMappingObject,
   stagesHubspotToAceMappingObject,
 } from "@libs/types";
 
@@ -15,6 +15,8 @@ export const createOpportunityObject = async (
     objectId: dealId,
     properties: { hubspot_owner_id, identifiant_ace, dealstage },
   } = event;
+
+  const toto = event.properties.hubspot_owner_id;
 
   const [notes, company, owner] = await Promise.all([
     getDealNotes(dealId),
@@ -48,7 +50,7 @@ export const createOpportunityObject = async (
         country,
         postalCode,
         customerWebsite,
-        industry: industryHubspotToAceMappingObject[hubspotIndustry],
+        industry: hubspotToAceIndustryMappingObject[hubspotIndustry],
 
         // owner
         primaryContactLastName,
