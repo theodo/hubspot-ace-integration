@@ -5,12 +5,7 @@ import { aceBus } from "src/resources/eventBridge";
 
 export const dispatchOpportunityProcessedResult = {
   handler: `${handlerPath(__dirname)}/handler.main`,
-  events: [
-    {
-      //todo: 5 min ou 1 min
-      schedule: "rate(10 hours)",
-    },
-  ],
+  events: [{ schedule: "rate(5 minutes)" }],
   environment: {
     BUCKET_NAME: "${param:aceBucketName}",
     ACE_ASSUME_ROLE_ARN: stack.resolve(ACES3BucketAccessRole.roleArn),
