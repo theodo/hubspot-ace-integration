@@ -46,6 +46,10 @@ const listProcessedInboundOpportunities = async (): Promise<string[]> => {
   const processedOpportunities = await s3Client.send(listCommand);
   console.log(processedOpportunities);
 
+  if (processedOpportunities.Contents === undefined) {
+    return [];
+  }
+
   return processedOpportunities.Contents.map((file) => file.Key).filter(
     (key) => key !== prefix
   );
