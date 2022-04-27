@@ -40,16 +40,3 @@ const writeOpportunity = async (
 };
 
 export const main = middyfy(writeOpportunity);
-
-interface EnvironmentVars {
-  NAME: string;
-  OS: string;
-
-  // Unknown properties are covered by this index signature.
-  [propName: string]: string;
-}
-
-declare const env: EnvironmentVars;
-const sysName = env.NAME;
-const os = env.OS;
-const nodeEnv = env.NODE_ENV;

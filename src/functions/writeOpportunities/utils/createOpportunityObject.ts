@@ -16,8 +16,6 @@ export const createOpportunityObject = async (
     properties: { hubspot_owner_id, identifiant_ace, dealstage },
   } = event;
 
-  const toto = event.properties.hubspot_owner_id;
-
   const [notes, company, owner] = await Promise.all([
     getDealNotes(dealId),
     getDealCompany(dealId),
