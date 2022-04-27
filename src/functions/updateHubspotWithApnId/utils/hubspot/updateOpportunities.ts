@@ -6,6 +6,11 @@ export const updateOpportunities = (opportunities: InboundApiResult[]) =>
     opportunities.map(async (opportunity) => {
       if (!opportunity.isSuccess) {
         // TODO: handle errors
+        console.log(
+          "opportunity was not added to APN correctly with error",
+          opportunity.errors
+        );
+
         return;
       }
 
