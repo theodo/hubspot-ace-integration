@@ -16,7 +16,7 @@ describe("industryValidator", () => {
   });
 
   it("should trow error if industry is not in the list", async () => {
-    await expect(
+    await expect(() =>
       industryValidator.validate("Not an industry")
     ).rejects.toThrow();
   });
@@ -37,8 +37,8 @@ describe("projectDescriptionValidator", () => {
   });
 
   it("should trow error if description is < 50 chars", async () => {
-    await expect(
-      await descriptionValidator.validate("This is a short description")
+    await expect(() =>
+      descriptionValidator.validate("This is a short description")
     ).rejects.toThrow();
   });
 });
