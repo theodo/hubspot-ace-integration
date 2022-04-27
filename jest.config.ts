@@ -13,6 +13,10 @@ const config: InitialOptionsTsJest = {
   testEnvironment: "node",
   coverageReporters: ["json", ["lcov", { projectRoot: "./" }]],
   testPathIgnorePatterns: ["/node_modules/", "/dist/"],
+  moduleNameMapper: {
+    "^@libs(.*)$": "<rootDir>/src/libs$1",
+  },
+  setupFilesAfterEnv: ["<rootDir>/.jest/setEnvVars.ts"],
 };
 
 export default config;
