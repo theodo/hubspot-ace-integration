@@ -13,10 +13,8 @@ export const createOpportunityObject = async (
 ): Promise<AceFileOpportunityInbound> => {
   const {
     objectId: dealId,
-    properties: { hubspot_owner_id, identifiant_ace, dealstage },
+    properties: { hubspot_owner_id, dealstage },
   } = event;
-
-  const toto = event.properties.hubspot_owner_id;
 
   const [notes, company, owner] = await Promise.all([
     getDealNotes(dealId),
@@ -60,7 +58,7 @@ export const createOpportunityObject = async (
         // notes
         projectDescription: notes,
 
-        status: !identifiant_ace && "Draft",
+        status: "Draft",
         stage: stagesHubspotToAceMappingObject[dealstage],
         customerTitle: "",
         customerPhone: "",

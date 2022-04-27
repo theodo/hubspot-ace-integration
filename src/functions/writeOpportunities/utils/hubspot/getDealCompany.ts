@@ -8,7 +8,7 @@ export const getDealCompany = async (dealId: number): Promise<Company> => {
   const defaultCompany: Company = {
     secteur_gics: "",
     country: "France",
-    domain: "theodo.fr",
+    domain: "client.fr",
     zip: "75017",
     name: "",
   };
@@ -19,6 +19,10 @@ export const getDealCompany = async (dealId: number): Promise<Company> => {
     dealId.toString(),
     "Companies"
   );
+
+  if (companies.length === 0) {
+    return defaultCompany;
+  }
 
   const [{ id: companyId }] = companies;
 

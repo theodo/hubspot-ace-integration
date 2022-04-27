@@ -1,5 +1,7 @@
 import { EventBridgeEvent } from "aws-lambda/trigger/eventbridge";
 
+import { AceIndustry } from "@libs/constants/ace/industry";
+
 interface HubspotValue {
   versions: {
     name: string;
@@ -79,32 +81,34 @@ export interface Company {
   name: string | undefined;
 }
 
-export const hubspotToAceIndustryMappingObject = {
-  "": "Other and other",
-  Energie: "Power and Utilities",
-  "Bien d'équipement industrie": "Manufacturing",
-  "Fabrication de Matériaux": "Manufacturing",
-  "Services Commerciaux et Professionnels": "Professional Services",
-  Transports: "Transportation & Logistics",
-  Automobile: "Automotive",
-  "Biens de consommation durable et habillement": "Consumer Goods",
-  "Services consommateurs": "Professional Services",
-  Médias: "Media & Entertainment",
-  "Vente au détail": "Wholesale & Distribution",
-  "Vente au détail de produits alimentaires": "Wholesale & Distribution",
-  "Produits Alimentaires, Boissons et Tabac": "Consumer Goods",
-  "Produits domestiques et de soins personnels": "Consumer Goods",
-  "Equipements et services de santé": "Healthcare",
-  "Pharmaceutique et biotechnologies": "Healthcare",
-  Banque: "Financial Services",
-  "Services financiers": "Financial Services",
-  Assurance: "Financial Services",
-  Immobilier: "Real Estate & Construction",
-  "Logiciels et services IT": "Software & Internet",
-  "Matériel IT": "Software & Internet",
-  "Semi-conducteurs": "Manufacturing",
-  Télécommunication: "Telecommunications",
-  "Services aux collectivités": "Professional Services",
+export const hubspotToAceIndustryMappingObject: Record<string, AceIndustry> = {
+  "": AceIndustry.Other,
+  Energie: AceIndustry["Power & Utilities"],
+  "Bien d'équipement industrie": AceIndustry.Manufacturing,
+  "Fabrication de Matériaux": AceIndustry.Manufacturing,
+  "Services Commerciaux et Professionnels":
+    AceIndustry["Professional Services"],
+  Transports: AceIndustry["Transportation & Logistics"],
+  Automobile: AceIndustry.Automotive,
+  "Biens de consommation durable et habillement": AceIndustry["Consumer Goods"],
+  "Services consommateurs": AceIndustry["Professional Services"],
+  Médias: AceIndustry["Media & Entertainment"],
+  "Vente au détail": AceIndustry["Wholesale & Distribution"],
+  "Vente au détail de produits alimentaires":
+    AceIndustry["Wholesale & Distribution"],
+  "Produits Alimentaires, Boissons et Tabac": AceIndustry["Consumer Goods"],
+  "Produits domestiques et de soins personnels": AceIndustry["Consumer Goods"],
+  "Equipements et services de santé": AceIndustry.Healthcare,
+  "Pharmaceutique et biotechnologies": AceIndustry.Healthcare,
+  Banque: AceIndustry["Financial Services"],
+  "Services financiers": AceIndustry["Financial Services"],
+  Assurance: AceIndustry["Financial Services"],
+  Immobilier: AceIndustry["Real Estate & Construction"],
+  "Logiciels et services IT": AceIndustry["Software & Internet"],
+  "Matériel IT": AceIndustry["Software & Internet"],
+  "Semi-conducteurs": AceIndustry["Manufacturing"],
+  Télécommunication: AceIndustry["Telecommunications"],
+  "Services aux collectivités": AceIndustry["Professional Services"],
 };
 
 export const companyPropertiesNeeded = [
