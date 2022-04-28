@@ -1,18 +1,13 @@
 import defaults from "lodash/defaults";
 
 import { hubspotClient } from "@libs/hubspot/client";
-import type { Company } from "@libs/types";
+import type { HubspotCompany, HubspotDeal } from "@libs/types";
 import { companyPropertiesNeeded } from "@libs/types";
 
-export const getDealCompany = async (dealId: number): Promise<Company> => {
-  const defaultCompany: Company = {
-    secteur_gics: "",
-    country: "France",
-    domain: "client.fr",
-    zip: "75017",
-    name: "",
-  };
-
+export const getDealCompany = async (
+  dealId: number,
+  deal: HubspotDeal<string>
+): Promise<HubspotCompany> => {
   const {
     body: { results: companies },
   } = await hubspotClient.crm.deals.associationsApi.getAll(
@@ -20,13 +15,20 @@ export const getDealCompany = async (dealId: number): Promise<Company> => {
     "Companies"
   );
 
-  if (companies.length === 0) {
-    return defaultCompany;
+  const defaultHubspotCompany: HubspotCompany = {
+    name: deal.dealname,
+    domain: "client.fr",
+    country: "France",
+    zip: "75017",
+  };
+
+  const [company] = companies;
+
+  if (!company) {
+    return defaultHubspotCompany;
   }
 
-  const [{ id: companyId }] = companies;
-
-  if (!companyId) return undefined;
+  const { id: companyId } = company;
 
   const {
     body: { properties: fetchedCompany },
@@ -35,5 +37,5 @@ export const getDealCompany = async (dealId: number): Promise<Company> => {
     companyPropertiesNeeded
   );
 
-  return defaults(fetchedCompany, defaultCompany);
+  return defaults(fetchedCompany, defaultHubspotCompany);
 };

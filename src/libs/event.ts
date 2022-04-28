@@ -2,7 +2,7 @@ import { EventBridge } from "aws-sdk";
 import { Bus, Event } from "typebridge";
 
 export const EventBus = new Bus({
-  name: process.env.ACE_BUS_NAME,
+  name: process.env.ACE_BUS_NAME as string,
   EventBridge: new EventBridge(),
 });
 
@@ -11,6 +11,7 @@ export const opportunityCreatedPayloadSchema = {
   properties: {
     fileKey: { type: "string" },
   },
+  required: ["fileKey"],
   additionalProperties: false,
 } as const;
 

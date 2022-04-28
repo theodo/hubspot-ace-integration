@@ -1,32 +1,32 @@
 import moment from "moment";
 
-import type { AceFileOpportunityInbound, HubspotWebhook } from "@libs/types";
+import { AceFileOpportunityInbound, HubspotWebhook } from "@libs/types";
 import {
-  hubspotToAceIndustryMappingObject,
-  stagesHubspotToAceMappingObject,
+  hubspotToAceIndustryMapping,
+  hubspotToAceStageMapping,
 } from "@libs/types";
+import { AceIndustry } from "@libs/constants/ace/industry";
+import { DEFAULT_ACE_STAGE } from "@libs/constants/ace/stage";
 
 import { getDealCompany, getDealNotes, getOwner } from "./hubspot";
 
 export const createOpportunityObject = async (
   event: HubspotWebhook<string>
 ): Promise<AceFileOpportunityInbound> => {
-  const {
-    objectId: dealId,
-    properties: { hubspot_owner_id, dealstage },
-  } = event;
+  const { objectId: dealId, properties: dealProperties } = event;
+  const { hubspot_owner_id, dealstage } = dealProperties;
 
   const [notes, company, owner] = await Promise.all([
     getDealNotes(dealId),
-    getDealCompany(dealId),
+    getDealCompany(dealId, dealProperties),
     getOwner(hubspot_owner_id),
   ]);
 
   // company
   const {
     name: customerCompanyName = event.properties.dealname,
-    country,
-    zip: postalCode,
+    country = "FR",
+    zip: postalCode = "75017",
     domain: customerWebsite,
     secteur_gics: hubspotIndustry,
   } = company;
@@ -38,9 +38,15 @@ export const createOpportunityObject = async (
     email: primaryContactEmail,
   } = owner;
 
+  let aceIndustry: AceIndustry = AceIndustry.Other;
+  if (hubspotIndustry) {
+    aceIndustry =
+      hubspotToAceIndustryMapping[hubspotIndustry] || AceIndustry.Other;
+  }
+
   return {
     version: "1",
-    spmsId: process.env.SPMS_ID,
+    spmsId: process.env.SPMS_ID as string,
     opportunities: [
       {
         // company
@@ -48,7 +54,7 @@ export const createOpportunityObject = async (
         country,
         postalCode,
         customerWebsite,
-        industry: hubspotToAceIndustryMappingObject[hubspotIndustry],
+        industry: aceIndustry,
 
         // owner
         primaryContactLastName,
@@ -59,19 +65,24 @@ export const createOpportunityObject = async (
         projectDescription: notes,
 
         status: "Draft",
-        stage: stagesHubspotToAceMappingObject[dealstage],
+        stage: hubspotToAceStageMapping[dealstage] || DEFAULT_ACE_STAGE,
+
+        // We do not want to give customer data but have to provide keys
         customerTitle: "",
         customerPhone: "",
         customerLastName: "",
         customerFirstName: "",
         customerEmail: "",
+
         partnerProjectTitle: event.properties.dealname,
         deliveryModel: "Managed Services",
         expectedMonthlyAwsRevenue: 100.0,
         partnerPrimaryNeedFromAws: "For Visibility - No Assistance Needed",
-        targetCloseDate: moment(parseInt(event.properties.closedate)).format(
-          "YYYY-MM-DD"
-        ),
+
+        targetCloseDate: (event.properties.closedate
+          ? moment(parseInt(event.properties.closedate))
+          : moment().add({ days: 7 })
+        ).format("YYYY-MM-DD"),
 
         partnerCrmUniqueIdentifier: dealId.toString(),
         useCase: "Containers & Serverless",

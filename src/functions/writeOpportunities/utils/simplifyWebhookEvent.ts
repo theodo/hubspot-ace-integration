@@ -1,4 +1,5 @@
 import type {
+  HubspotDeal,
   WebhookEventBridgeEvent,
   WebhookEventBridgeEventWrapped,
 } from "@libs/types";
@@ -12,7 +13,7 @@ export const simplifyWebhookEvent = (
 
   const simplifiedProperties = Object.entries(originalProperties).reduce(
     (o, key) => ({ ...o, [key[0]]: key[1].value }),
-    {}
+    {} as HubspotDeal<string>
   );
 
   return {
