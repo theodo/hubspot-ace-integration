@@ -1,10 +1,7 @@
 import moment from "moment";
 
 import { AceFileOpportunityInbound, HubspotWebhook } from "@libs/types";
-import {
-  hubspotToAceIndustryMapping,
-  hubspotToAceStageMapping,
-} from "@libs/types";
+import { hubspotToAceIndustryMapping } from "@libs/types";
 import { AceIndustry } from "@libs/constants/ace/industry";
 import { DEFAULT_ACE_STAGE } from "@libs/constants/ace/stage";
 
@@ -14,7 +11,7 @@ export const createOpportunityObject = async (
   event: HubspotWebhook<string>
 ): Promise<AceFileOpportunityInbound> => {
   const { objectId: dealId, properties: dealProperties } = event;
-  const { hubspot_owner_id, dealstage } = dealProperties;
+  const { hubspot_owner_id } = dealProperties;
 
   const [notes, company, owner] = await Promise.all([
     getDealNotes(dealId),
@@ -64,8 +61,10 @@ export const createOpportunityObject = async (
         // notes
         projectDescription: notes,
 
+        // We test only on Draft status & Prospect stage for now
         status: "Draft",
-        stage: hubspotToAceStageMapping[dealstage] || DEFAULT_ACE_STAGE,
+        // stage: hubspotToAceStageMapping[dealstage] || DEFAULT_ACE_STAGE,
+        stage: DEFAULT_ACE_STAGE,
 
         // We do not want to give customer data but have to provide keys
         customerTitle: "",
