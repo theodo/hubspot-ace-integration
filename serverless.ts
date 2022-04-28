@@ -20,7 +20,12 @@ const serverlessConfiguration: AWS & Lift = {
     "hubspot-webhook": {
       type: "webhook",
       path: "/hubspot",
-      insecure: true,
+      /**
+       * @debt security "We cannot use authorizer for now as identitySource is set to Authorization header in Lift, which is not present in Hubspot request. See https://github.com/getlift/lift/pull/196"
+       */
+      authorizer: {
+        handler: "src/functions/hubspotAuthorizer/handler.main",
+      },
     },
   },
   provider: {
