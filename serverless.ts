@@ -6,16 +6,23 @@ import { App, Stack } from "@aws-cdk/core";
 // TODO make initialization in a separate file
 const app = new App();
 export const stack = new Stack(app);
+
 import { functions } from "@functions/index";
 import { ACES3BucketAccessRole } from "src/resources/iam";
 import { hubspotAccessToken } from "src/resources/ssm";
 import { aceBus } from "src/resources/eventBridge";
 
-const serverlessConfiguration: AWS & Lift = {
+import { stepFunctions } from "src/stepFunctions";
+
+const serverlessConfiguration: AWS & Lift & { stepFunctions: unknown } = {
   service: "hubspot-ace-integration",
   variablesResolutionMode: "20210326",
   frameworkVersion: "3",
-  plugins: ["serverless-esbuild", "serverless-lift"],
+  plugins: [
+    "serverless-esbuild",
+    "serverless-lift",
+    "serverless-step-functions",
+  ],
   constructs: {
     "hubspot-webhook": {
       type: "webhook",
@@ -61,6 +68,10 @@ const serverlessConfiguration: AWS & Lift = {
       },
     },
   },
+  functions,
+  stepFunctions,
+  package: { individually: true },
+  resources: app.synth().getStackByName(stack.stackName).template,
   params: {
     default: {
       spmsId: "1588143",
@@ -76,10 +87,6 @@ const serverlessConfiguration: AWS & Lift = {
         "arn:aws:kms:us-west-2:249845964689:key/9fc269db-553b-422f-b9f7-de95c2c1352c",
     },
   },
-  // import the function via paths
-  functions,
-  package: { individually: true },
-  resources: app.synth().getStackByName(stack.stackName).template,
   custom: {
     esbuild: {
       bundle: true,
