@@ -1,6 +1,6 @@
 import {
-  ListObjectsCommand,
-  ListObjectsCommandInput,
+  ListObjectsV2Command,
+  ListObjectsV2CommandInput,
   S3Client,
 } from "@aws-sdk/client-s3";
 import { fromTemporaryCredentials } from "@aws-sdk/credential-providers";
@@ -35,12 +35,13 @@ export const main = async (): Promise<void> => {
 
 const listProcessedInboundOpportunities = async (): Promise<string[]> => {
   const prefix = "opportunity-inbound-processed-results/";
-  const listInput: ListObjectsCommandInput = {
+
+  const listInput: ListObjectsV2CommandInput = {
     Bucket: process.env.BUCKET_NAME,
     Prefix: prefix,
   };
 
-  const listCommand = new ListObjectsCommand(listInput);
+  const listCommand = new ListObjectsV2Command(listInput);
 
   // TODO: handle the cas when results are paginated over a single page
   const processedOpportunities = await s3Client.send(listCommand);
@@ -50,9 +51,9 @@ const listProcessedInboundOpportunities = async (): Promise<string[]> => {
     return [];
   }
 
-  return processedOpportunities.Contents.map((file) => file.Key).filter(
-    (key) => key !== prefix
-  );
+  return processedOpportunities.Contents.map(
+    (file) => file.Key as string
+  ).filter((key) => key !== prefix);
 };
 
 const publishEvents = async (fileKeys: string[]) => {

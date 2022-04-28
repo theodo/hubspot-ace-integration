@@ -15,7 +15,7 @@ const writeOpportunity = async (
   /**
    * @debt refacto "Hydrate hubspotClient accessToken in middleware"
    */
-  hubspotClient.setAccessToken(process.env.HUBSPOT_ACCESS_TOKEN);
+  hubspotClient.setAccessToken(process.env.HUBSPOT_ACCESS_TOKEN as string);
 
   console.log("event", JSON.stringify(event));
 

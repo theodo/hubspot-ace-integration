@@ -1,11 +1,24 @@
 import type { PublicOwner } from "@hubspot/api-client/lib/codegen/crm/owners/api";
+import defaults from "lodash/defaults";
 
 import { hubspotClient } from "@libs/hubspot/client";
 
-export const getOwner = async (ownerId: string): Promise<PublicOwner> => {
-  const { body: ownder } = await hubspotClient.crm.owners.ownersApi.getById(
+const defaultOwner = {
+  lastName: "Perennec",
+  firstName: "Yann",
+  email: "yannp@theodo.fr",
+};
+
+export const getOwner = async (
+  ownerId: string | undefined
+): Promise<Required<Pick<PublicOwner, "lastName" | "firstName" | "email">>> => {
+  if (!ownerId) return defaultOwner;
+
+  const { body: owner } = await hubspotClient.crm.owners.ownersApi.getById(
     parseInt(ownerId)
   );
 
-  return ownder;
+  const { email, firstName, lastName } = owner;
+
+  return defaults({ email, firstName, lastName }, defaultOwner);
 };

@@ -20,12 +20,18 @@ export const updateOpportunities = (opportunities: InboundApiResult[]) =>
         },
       };
 
+      const { partnerCrmUniqueIdentifier, apnCrmUniqueIdentifier } =
+        opportunity;
+
       console.log(
-        `Update hubspot deal ${opportunity.partnerCrmUniqueIdentifier} with ACE id ${opportunity.apnCrmUniqueIdentifier}`
+        `Update hubspot deal ${partnerCrmUniqueIdentifier} with ACE id ${apnCrmUniqueIdentifier}`
       );
 
+      // Possible if Hubspot is providing the lead: We should create instead of update in this case
+      if (!partnerCrmUniqueIdentifier) return;
+
       await hubspotClient.crm.deals.basicApi.update(
-        opportunity.partnerCrmUniqueIdentifier,
+        partnerCrmUniqueIdentifier,
         inputHubspotUpdate
       );
     })

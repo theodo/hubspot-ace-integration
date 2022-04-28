@@ -5,8 +5,8 @@ import { s3Client } from "@libs/s3/client";
 import { OpportunityResult } from "@libs/types";
 
 const streamToString = (stream: Readable) =>
-  new Promise((resolve, reject) => {
-    const chunks = [];
+  new Promise<string>((resolve, reject) => {
+    const chunks: Buffer[] = [];
     stream.on("data", (chunk) => chunks.push(chunk));
     stream.on("error", reject);
     stream.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
