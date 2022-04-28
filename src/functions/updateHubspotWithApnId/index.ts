@@ -5,7 +5,7 @@ import { aceBus } from "src/resources/eventBridge";
 import { ACES3BucketAccessRole } from "src/resources/iam";
 import { hubspotAccessToken } from "src/resources/ssm";
 
-export default {
+export const updateHubspotWithApnId = {
   handler: `${handlerPath(__dirname)}/handler.main`,
   events: [
     {

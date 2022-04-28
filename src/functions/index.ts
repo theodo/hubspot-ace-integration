@@ -1,9 +1,9 @@
-import writeOpportunities from "./writeOpportunities";
-import { dispatchOpportunityProcessedResult } from "./dispatchOpportunityProcessedResult";
-import updateHubspotWithApnId from "./updateHubspotWithApnId";
+import { writeOpportunities } from "./writeOpportunities";
+import { dispatchOpportunityProcessedRslt } from "./dispatchOpportunityProcessedResult";
+import { updateHubspotWithApnId } from "./updateHubspotWithApnId";
 
 export const functions = {
   writeOpportunities,
-  dispatchOpportunityProcessedRslt: dispatchOpportunityProcessedResult,
+  dispatchOpportunityProcessedRslt,
   updateHubspotWithApnId,
 };

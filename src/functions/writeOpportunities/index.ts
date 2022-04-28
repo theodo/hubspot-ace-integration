@@ -3,7 +3,7 @@ import { stack } from "serverless";
 import { hubspotAccessToken } from "src/resources/ssm";
 import { ACES3BucketAccessRole } from "src/resources/iam";
 
-export default {
+export const writeOpportunities = {
   handler: `${handlerPath(__dirname)}/handler.main`,
   events: [
     {
