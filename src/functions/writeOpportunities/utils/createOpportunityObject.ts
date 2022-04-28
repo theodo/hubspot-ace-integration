@@ -46,45 +46,32 @@ export const createOpportunityObject = async (
     spmsId: process.env.SPMS_ID as string,
     opportunities: [
       {
-        // company
+        useCase: "Containers & Serverless",
+        targetCloseDate: (event.properties.closedate
+          ? moment(parseInt(event.properties.closedate))
+          : moment().add({ days: 7 })
+        ).format("YYYY-MM-DD"),
+        projectDescription: notes,
+        postalCode,
+        partnerProjectTitle: event.properties.dealname,
+        partnerPrimaryNeedFromAws: "For Visibility - No Assistance Needed",
+        partnerCrmUniqueIdentifier: dealId.toString(),
+        industry: aceIndustry,
+        expectedMonthlyAwsRevenue: 100.0,
+        deliveryModel: "Managed Services",
+        customerWebsite,
         customerCompanyName,
         country,
-        postalCode,
-        customerWebsite,
-        industry: aceIndustry,
-
-        // owner
-        primaryContactLastName,
-        primaryContactFirstName,
-        primaryContactEmail,
-
-        // notes
-        projectDescription: notes,
 
         // We test only on Draft status & Prospect stage for now
         status: "Draft",
         // stage: hubspotToAceStageMapping[dealstage] || DEFAULT_ACE_STAGE,
         stage: DEFAULT_ACE_STAGE,
 
-        // We do not want to give customer data but have to provide keys
-        customerTitle: "",
-        customerPhone: "",
-        customerLastName: "",
-        customerFirstName: "",
-        customerEmail: "",
-
-        partnerProjectTitle: event.properties.dealname,
-        deliveryModel: "Managed Services",
-        expectedMonthlyAwsRevenue: 100.0,
-        partnerPrimaryNeedFromAws: "For Visibility - No Assistance Needed",
-
-        targetCloseDate: (event.properties.closedate
-          ? moment(parseInt(event.properties.closedate))
-          : moment().add({ days: 7 })
-        ).format("YYYY-MM-DD"),
-
-        partnerCrmUniqueIdentifier: dealId.toString(),
-        useCase: "Containers & Serverless",
+        // contact
+        primaryContactLastName,
+        primaryContactFirstName,
+        primaryContactEmail,
       },
     ],
   };

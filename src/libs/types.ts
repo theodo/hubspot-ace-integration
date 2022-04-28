@@ -186,29 +186,32 @@ export interface AceFileOpportunityInbound {
 }
 
 export interface OpportunityInbound {
-  status: string;
   customerCompanyName: string;
-  customerTitle: string | undefined;
-  customerPhone: string | undefined;
-  customerLastName: string | undefined;
-  customerFirstName: string | undefined;
-  customerEmail: string | undefined;
   customerWebsite: string;
   partnerProjectTitle: string;
   deliveryModel: string;
   expectedMonthlyAwsRevenue: number;
   partnerPrimaryNeedFromAws: string;
   targetCloseDate: string;
-  stage: string;
   country: string;
   postalCode: string;
-  primaryContactLastName: string;
-  primaryContactFirstName: string;
-  primaryContactEmail: string;
   industry: string;
   projectDescription: string;
   partnerCrmUniqueIdentifier: string;
   useCase: string;
+
+  status?: string;
+  stage?: string;
+
+  primaryContactLastName?: string;
+  primaryContactFirstName?: string;
+  primaryContactEmail?: string;
+
+  customerTitle?: string;
+  customerPhone?: string;
+  customerLastName?: string;
+  customerFirstName?: string;
+  customerEmail?: string;
 }
 
 export const hubspotToAceIndustryMapping: Record<string, AceIndustry> = {
