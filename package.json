@@ -58,6 +58,7 @@
     "serverless": "^3.3.0",
     "serverless-esbuild": "^1.17.1",
     "serverless-lift": "^1.14.0",
+    "serverless-step-functions": "^3.7.0",
     "ts-jest": "^27.1.2",
     "ts-node": "^10.4.0",
     "tsconfig-paths": "^3.9.0",
