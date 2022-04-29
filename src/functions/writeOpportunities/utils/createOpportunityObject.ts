@@ -11,7 +11,7 @@ export const createOpportunityObject = async (
   event: HubspotWebhook<string>
 ): Promise<AceFileOpportunityInbound> => {
   const { objectId: dealId, properties: dealProperties } = event;
-  const { hubspot_owner_id } = dealProperties;
+  const { hubspot_owner_id, identifiant_ace } = dealProperties;
 
   const [notes, company, owner] = await Promise.all([
     getDealNotes(dealId),
@@ -72,6 +72,9 @@ export const createOpportunityObject = async (
         primaryContactLastName,
         primaryContactFirstName,
         primaryContactEmail,
+
+        // Update instead of create if opportunity already exists
+        apnCrmUniqueIdentifier: identifiant_ace,
       },
     ],
   };

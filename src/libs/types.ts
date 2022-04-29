@@ -212,6 +212,8 @@ export interface OpportunityInbound {
   customerLastName?: string;
   customerFirstName?: string;
   customerEmail?: string;
+
+  apnCrmUniqueIdentifier?: string;
 }
 
 export const hubspotToAceIndustryMapping: Record<string, AceIndustry> = {
@@ -276,15 +278,23 @@ export const aceToHubspotStageMapping = {
   Launched: "1573504",
 };
 
-export interface OpportunityResult {
-  success: string;
-  spmsId: string;
-  isApiError: boolean;
-  inboundApiResults: InboundApiResult[];
-  fileName: string;
-  fileApnProcessedDT: string;
-  apiErrors: string | null;
-}
+export type OpportunityResult =
+  | {
+      fileName: string;
+      error?: undefined;
+      success: string;
+      inboundApiResults: InboundApiResult[];
+      spmsId: string;
+      isApiError: boolean;
+      fileApnProcessedDT: string;
+      apiErrors: string | null;
+    }
+  | {
+      fileName: string;
+      error: string;
+      success?: undefined;
+      inboundApiResults?: undefined;
+    };
 
 export interface InboundApiResult {
   warnings: string | null;

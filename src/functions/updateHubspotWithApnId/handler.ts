@@ -12,20 +12,28 @@ import { updateOpportunities } from "./utils/hubspot/updateOpportunities";
 export const updateHubspotWithApnId = async (
   event: PublishedEvent<typeof opportunityCreatedEvent>
 ): Promise<void> => {
+  console.log("Full event:", event);
+
   /**
    * @debt refacto "Hydrate hubspotClient accessToken in middleware"
    */
   hubspotClient.setAccessToken(process.env.HUBSPOT_ACCESS_TOKEN as string);
 
-  console.log("Event", event);
-
   const { fileKey } = event.detail;
 
-  const { inboundApiResults: opportunities } = await fetchOpportunity(fileKey);
+  const opportunity = await fetchOpportunity(fileKey);
 
-  await updateOpportunities(opportunities);
+  if (opportunity.inboundApiResults) {
+    const { inboundApiResults: opportunities } = opportunity;
+    await updateOpportunities(opportunities);
+  }
 
-  console.log(`Delete file ${fileKey}`);
+  if (opportunity.error) {
+    const { error, fileName } = opportunity;
+    console.error(`Error handling opportunities in ${fileName}: ${error}`);
+  }
+
+  console.log(`Deleting file ${fileKey}...`);
 
   await s3Client.send(
     new DeleteObjectCommand({
