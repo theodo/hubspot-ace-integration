@@ -1,12 +1,13 @@
 import { InboundApiResult } from "@libs/types";
 import { hubspotClient } from "@libs/hubspot/client";
+import { StatusCodes } from "http-status-codes";
 
 export const updateOpportunities = (opportunities: InboundApiResult[]) =>
   Promise.all(
     opportunities.map(async (opportunity) => {
       if (!opportunity.isSuccess) {
         // TODO: handle errors
-        console.log(
+        console.error(
           "opportunity was not added to APN correctly with error",
           opportunity.errors
         );
@@ -30,9 +31,18 @@ export const updateOpportunities = (opportunities: InboundApiResult[]) =>
       // Possible if Hubspot is providing the lead: We should create instead of update in this case
       if (!partnerCrmUniqueIdentifier) return;
 
-      await hubspotClient.crm.deals.basicApi.update(
-        partnerCrmUniqueIdentifier,
-        inputHubspotUpdate
-      );
+      try {
+        await hubspotClient.crm.deals.basicApi.update(
+          partnerCrmUniqueIdentifier,
+          inputHubspotUpdate
+        );
+      } catch (e) {
+        const statusCode = (e as Record<string, unknown>)?.statusCode;
+        if (statusCode === StatusCodes.NOT_FOUND) {
+          // Deal has been deleted in Hubspot
+          return;
+        }
+        throw e;
+      }
     })
   );
