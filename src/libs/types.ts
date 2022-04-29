@@ -212,6 +212,8 @@ export interface OpportunityInbound {
   customerLastName?: string;
   customerFirstName?: string;
   customerEmail?: string;
+
+  apnCrmUniqueIdentifier?: string;
 }
 
 export const hubspotToAceIndustryMapping: Record<string, AceIndustry> = {
