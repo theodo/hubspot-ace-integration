@@ -13,7 +13,10 @@ import { hubspotAccessToken } from "src/resources/ssm";
 import { aceBus } from "src/resources/eventBridge";
 import { Machine } from "src/resources/stepFunction";
 
-export const ProcessedHandlerMachine = new Machine(stack, "MyTestingMachine");
+export const ProcessedHandlerMachine = new Machine(
+  stack,
+  "HandleProcessedOpportunities"
+);
 
 const serverlessConfiguration: AWS & Lift = {
   service: "hubspot-ace-integration",
