@@ -19,8 +19,10 @@
     "node": ">=14.15.0"
   },
   "dependencies": {
+    "@aws-cdk/aws-s3": "^1.155.0",
     "@aws-sdk/client-s3": "^3.44.0",
     "@aws-sdk/credential-providers": "^3.45.0",
+    "@aws-solutions-constructs/aws-eventbridge-stepfunctions": "^2.5.0",
     "@hubspot/api-client": "^5.0.0",
     "@middy/core": "^2.5.3",
     "@middy/http-json-body-parser": "^2.5.3",
@@ -34,10 +36,14 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
-    "@aws-cdk/aws-events": "^1.137.0",
+    "@aws-cdk/aws-events": "^1.155.0",
+    "@aws-cdk/aws-events-targets": "^1.155.0",
     "@aws-cdk/aws-iam": "^1.137.0",
-    "@aws-cdk/aws-sqs": "^1.138.0",
+    "@aws-cdk/aws-lambda": "^1.155.0",
+    "@aws-cdk/aws-sqs": "^1.155.0",
     "@aws-cdk/aws-ssm": "^1.137.0",
+    "@aws-cdk/aws-stepfunctions": "^1.155.0",
+    "@aws-cdk/aws-stepfunctions-tasks": "^1.155.0",
     "@aws-cdk/core": "^1.137.0",
     "@serverless/typescript": "^3.2.1",
     "@types/aws-lambda": "^8.10.71",
