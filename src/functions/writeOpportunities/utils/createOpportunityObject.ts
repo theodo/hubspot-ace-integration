@@ -76,8 +76,8 @@ export const createOpportunityObject = async (
         // Update instead of create if opportunity already exists
         apnCrmUniqueIdentifier: identifiant_ace,
 
-        // Temporary, for prospecting league purpose
-        additionalComments: "EMEA-Partner-FY22-MKT-PPL-FR-June-SUP&ISV",
+        // Temporary, for ServerlessDays Paris 2022
+        additionalComments: "EMEA-Partner-FY22-MKT-Concierge",
       },
     ],
   };
