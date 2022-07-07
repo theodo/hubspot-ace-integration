@@ -1,6 +1,6 @@
 import { hubspotClient } from "@libs/hubspot/client";
 import { InboutApiMockFailure, InboutApiMockSuccess } from "./mocks/event";
-import { updateOpportunities } from "./updateOpportunities";
+import { updateOpportunity } from "./updateOpportunity";
 
 describe("Update APN id on hubspot", () => {
   const mockedHubspotClientUpdate = jest
@@ -14,7 +14,7 @@ describe("Update APN id on hubspot", () => {
   });
 
   it("Test implementation with successful data", async () => {
-    await updateOpportunities([InboutApiMockSuccess]);
+    await updateOpportunity(InboutApiMockSuccess);
 
     expect(mockedHubspotClientUpdate).toHaveBeenCalledTimes(1);
     expect(mockedHubspotClientUpdate).toHaveBeenCalledWith(
@@ -28,7 +28,7 @@ describe("Update APN id on hubspot", () => {
   });
 
   it("Test implementation with failed data", async () => {
-    await updateOpportunities([InboutApiMockFailure]);
+    await updateOpportunity(InboutApiMockFailure);
 
     expect(mockedHubspotClientUpdate).toHaveBeenCalledTimes(0);
 
