@@ -75,6 +75,10 @@ export const createOpportunityObject = async (
 
         // Update instead of create if opportunity already exists
         apnCrmUniqueIdentifier: identifiant_ace,
+
+        // Temporary, for Prospecting league
+        additionalComments:
+          "EMEA-Partner-FY22-MKT-PPL-FR-Sept-Migration-Multi-partner",
       },
     ],
   };
