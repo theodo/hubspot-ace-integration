@@ -3,6 +3,7 @@ import { EventBridgeEvent } from "aws-lambda/trigger/eventbridge";
 import { AceIndustry } from "@libs/constants/ace/industry";
 
 import { AceStage } from "./constants/ace/stage";
+import { IsOppFromMarketingActivity } from "./constants/ace/marketing";
 
 interface HubspotValue {
   versions: {
@@ -215,6 +216,8 @@ export interface OpportunityInbound {
 
   apnCrmUniqueIdentifier?: string;
   additionalComments?: string;
+
+  IsOppFromMarketingActivity: IsOppFromMarketingActivity;
 }
 
 export const hubspotToAceIndustryMapping: Record<string, AceIndustry> = {

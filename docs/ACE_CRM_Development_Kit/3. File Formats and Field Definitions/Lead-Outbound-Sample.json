@@ -25,6 +25,7 @@
           "industry":"Business & Consumer Services",
           "fullName":"Accept To View",
           "email":"Accept To View",
+          "currentLeadStage":null,
           "createdDate":"2020-01-17T20:08:13.000Z",
           "createdBy":"TestName",
           "country":"Accept To View",
