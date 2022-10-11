@@ -1,3 +1,4 @@
+import { IsOppFromMarketingActivity } from "@libs/constants/ace/marketing";
 import { AceFileOpportunityInbound } from "@libs/types";
 
 export const aceOpportunityMock: AceFileOpportunityInbound = {
@@ -28,6 +29,7 @@ export const aceOpportunityMock: AceFileOpportunityInbound = {
       targetCloseDate: "2022-04-27",
       partnerCrmUniqueIdentifier: "8665646438",
       useCase: "Containers & Serverless",
+      IsOppFromMarketingActivity: IsOppFromMarketingActivity.No,
     },
   ],
 };
