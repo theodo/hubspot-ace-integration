@@ -4,6 +4,7 @@ import { AceFileOpportunityInbound, HubspotWebhook } from "@libs/types";
 import { hubspotToAceIndustryMapping } from "@libs/types";
 import { AceIndustry } from "@libs/constants/ace/industry";
 import { DEFAULT_ACE_STAGE } from "@libs/constants/ace/stage";
+import { IsOppFromMarketingActivity } from "@libs/constants/ace/marketing";
 
 import { getDealCompany, getDealNotes, getOwner } from "./hubspot";
 
@@ -76,9 +77,10 @@ export const createOpportunityObject = async (
         // Update instead of create if opportunity already exists
         apnCrmUniqueIdentifier: identifiant_ace,
 
-        // Temporary, for Prospecting league
-        additionalComments:
-          "EMEA-Partner-FY22-MKT-PPL-FR-Sept-Migration-Multi-partner",
+        // For marketing campaign
+        IsOppFromMarketingActivity: IsOppFromMarketingActivity.No,
+        // marketingActivityChannel : "Email",
+        // marketingActivityUsecase : "Analytics",
       },
     ],
   };
