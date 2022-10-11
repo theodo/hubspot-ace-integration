@@ -11,7 +11,7 @@ String METHOD = 'PUT';
 String finalJSON = 'Test 1';
 
 String bucketName = 'ace-apn-2057-beta-us-west-2';
-String endPointURL = 'https://s3.'+ region +'.amazonaws.com/' + bucketName + '/lead-inbound/';
+String endPointURL = 'https://s3.'+ region +'.amazonaws.com/' + bucketName + '/opportunity-inbound/';
 String filename = 'test12.json';
 PageReference pr = new PageReference(endPointURL + filename);
 Url endpoint = new Url(pr.getUrl());

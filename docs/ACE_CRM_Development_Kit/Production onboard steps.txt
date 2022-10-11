@@ -1,0 +1,15 @@
+To Successfully onboard to production, please follow below Steps.
+
+1. Once the development of integration completed, Partner will perform the testing of various scenarios provided in the “ACE CRM integration_UAT Test Scripts_V4.xlsx” (Present in Test Script folder in ACE CRM Development Kit).  
+2. Result/input json file names of all test scenarios must be attached to the document and provided to ACE.
+3. ACE team will review and share the status as Pass or fail with appropriate comments.
+4. Once the review completed and all test scripts execution are Pass, ACE team will provide the extract of opportunities from APN with ACE CRM Unique Identifier.
+5. Partner will provide the "partnerCrmUniqueIdentifier" values for the shared opportunities and share it back to Ace team. 
+6. Partner will provide ACE the ARN of the IAM user/role for Production AWS Account.
+7. Ace team will onboard the partner to production, update opportunities with "partnerCrmUniqueIdentifier" values in ACE and update partner with bucket policy.
+8. Partner will attach the policy to IAM user and deploy the code into their production environment and confirm deployment to ACE.
+9. Partner can test the integration in production by create/update actual opportunity and update PDM to monitor.
+
+Note:
+1. In the case where a Partner only wants to sync some of the opportunities on the file that AWS provided, then they are responsible to build logic to ignore the AWS updates for the opportunities they do not want to process. This also applies to opportunities in the future, once the onboarding is completed. The Partner should provide the associated “partnerCrmUniqueIdentifier” for the opportunities to be aligned in both CRMs, and then provide a denotation in the field for opportunities they will not be updating [for example: exclude updates to closed-lost, closed-won opportunities].
+2. All open/active AWS Originated and shared and accepted opportunities should have a “partnerCrmUniqueIdentifier”.
